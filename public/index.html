@@ -181,9 +181,14 @@
   const fmtDate = d => d ? new Date(d + 'T00:00:00').toLocaleDateString('en', { day: 'numeric', month: 'long', year: 'numeric' }) : '';
 
   // ── NJ-focused map ──
-  // Bounding box covers all of NJ with slices of NY (north), PA (west), DE (south).
-  const NJ_BOUNDS = L.latLngBounds([38.85, -75.75], [41.45, -73.75]);
-  const HUB_LATLNG = [40.3260, -74.6273]; // West Windsor
+  // Center on Princeton (where the Hub is); zoom tight enough to fill the
+  // view with NJ + a slice of Atlantic Ocean east. Slight east bias so the
+  // ocean shows on the right.
+  const HUB_LATLNG       = [40.3260, -74.6273]; // West Windsor
+  const NJ_DEFAULT_VIEW  = [40.30, -74.45];     // Princeton-ish, biased east toward ocean
+  const NJ_DEFAULT_ZOOM  = 8.5;
+  // Soft bounds — constrains panning, not the initial fit.
+  const NJ_PAN_BOUNDS    = L.latLngBounds([38.5, -76.2], [42.0, -72.8]);
 
   const heroMap = L.map('hero-map', {
     zoomControl: false,
@@ -195,8 +200,11 @@
     attributionControl: false,
     zoomSnap: 0.25,
     zoomDelta: 0.5,
+    minZoom: 7,
+    maxBounds: NJ_PAN_BOUNDS,
+    maxBoundsViscosity: 0.7,
   });
-  heroMap.fitBounds(NJ_BOUNDS, { padding: [20, 20] });
+  heroMap.setView(NJ_DEFAULT_VIEW, NJ_DEFAULT_ZOOM);
   L.control.zoom({ position: 'topright' }).addTo(heroMap);
 
   L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
@@ -215,7 +223,7 @@
   function scheduleZoomBack() {
     cancelZoomBack();
     window._zoomBackTimer = setTimeout(() => {
-      heroMap.flyToBounds(NJ_BOUNDS, { duration: 2.0, padding: [20, 20] });
+      heroMap.flyTo(NJ_DEFAULT_VIEW, NJ_DEFAULT_ZOOM, { duration: 2.0 });
       window._zoomBackTimer = null;
     }, 7000);
   }
