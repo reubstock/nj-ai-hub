@@ -77,11 +77,21 @@
     <!-- Latest Broadcast -->
     <div class="sidebar-card">
       <div class="sidebar-label">Latest Broadcast</div>
-      <div class="broadcast-thumb" onclick="playBroadcast()">
-        <img id="broadcast-img" src="https://images.unsplash.com/photo-1531058020387-3be344556be6?w=600&q=80&auto=format&fit=crop" alt="Latest broadcast" />
-        <div class="play">
-          <svg viewBox="0 0 52 52"><polygon points="14,8 44,26 14,44" fill="white"/></svg>
+      <div class="broadcast-thumb">
+        <div id="broadcast-thumb-inner" onclick="playBroadcast()" style="position:absolute;inset:0;cursor:pointer;">
+          <img id="broadcast-img"
+               src="https://i.ytimg.com/vi/Z9GEv2eM04g/maxresdefault.jpg"
+               onerror="this.onerror=null;this.src='https://i.ytimg.com/vi/Z9GEv2eM04g/hqdefault.jpg';"
+               alt="Latest broadcast" />
+          <div class="play">
+            <svg viewBox="0 0 52 52"><polygon points="14,8 44,26 14,44" fill="white"/></svg>
+          </div>
         </div>
+        <iframe id="broadcast-iframe"
+                src=""
+                style="display:none;position:absolute;inset:0;width:100%;height:100%;border:none;"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen></iframe>
       </div>
     </div>
 
@@ -558,10 +568,14 @@
   loadNews();
   loadEvents();
 
-  // Broadcast play stub — no-op for now (placeholder content).
+  // Broadcast: swap thumbnail for autoplaying YouTube embed.
   function playBroadcast() {
-    // TODO: wire to a YouTube embed once a real broadcast is selected.
-    console.log('Broadcast clicked — placeholder.');
+    const thumb  = document.getElementById('broadcast-thumb-inner');
+    const iframe = document.getElementById('broadcast-iframe');
+    if (!thumb || !iframe) return;
+    iframe.src = 'https://www.youtube.com/embed/Z9GEv2eM04g?autoplay=1&rel=0';
+    iframe.style.display = 'block';
+    thumb.style.display = 'none';
   }
 </script>
 </body>
