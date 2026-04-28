@@ -70,6 +70,93 @@
       <div id="sidebar-events"></div>
     </div>
   </div>
+
+  <!-- ── Right-side panel (placeholder content from YES Movement) ─ -->
+  <div id="map-sidebar-right">
+
+    <!-- Latest Broadcast -->
+    <div class="sidebar-card">
+      <div class="sidebar-label">Latest Broadcast</div>
+      <div class="broadcast-thumb" onclick="playBroadcast()">
+        <img id="broadcast-img" src="https://images.unsplash.com/photo-1531058020387-3be344556be6?w=600&q=80&auto=format&fit=crop" alt="Latest broadcast" />
+        <div class="play">
+          <svg viewBox="0 0 52 52"><polygon points="14,8 44,26 14,44" fill="white"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Movement in Progress -->
+    <div class="sidebar-card scroll">
+      <div class="sidebar-label">Movement in Progress</div>
+
+      <!-- Legend with counts -->
+      <div style="margin-bottom: 0.6rem; padding-bottom: 0.7rem; border-bottom: 1px solid rgba(255,255,255,0.08);">
+        <div class="legend-row">
+          <span class="label" style="color:#16a34a;">Groups</span>
+          <span class="count">3</span>
+        </div>
+        <div class="legend-row">
+          <span class="label" style="color:#dc2626;">Actions</span>
+          <span class="count">1</span>
+        </div>
+        <div class="legend-row">
+          <span class="label" style="color:#f5c518;">Summits</span>
+          <span class="count">2</span>
+        </div>
+      </div>
+
+      <!-- Groups -->
+      <div class="sidebar-section-title" style="text-decoration: underline;">GROUPS</div>
+      <div style="margin-bottom: 0.85rem;">
+        <div class="sidebar-item">
+          <div class="dot-mini" style="background:#16a34a;box-shadow:0 0 4px rgba(22,163,74,0.9);"></div>
+          <div class="body">
+            <div class="title">Red Barn Posse</div>
+            <div class="sub">📍 Petaluma, United States</div>
+          </div>
+        </div>
+        <div class="sidebar-item">
+          <div class="dot-mini" style="background:#16a34a;box-shadow:0 0 4px rgba(22,163,74,0.9);"></div>
+          <div class="body">
+            <div class="title">Einstein's Gardeners</div>
+            <div class="sub">📍 Princeton, United States</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="sidebar-section-title" style="text-decoration: underline;">ACTIONS</div>
+      <div style="margin-bottom: 0.85rem;">
+        <div class="sidebar-item">
+          <div class="dot-mini" style="background:#dc2626;box-shadow:0 0 4px rgba(220,38,38,0.9);"></div>
+          <div class="body">
+            <div class="title">Teach Someone the word "LOCAL"</div>
+            <div class="sub">📍 New Orleans, United States</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Summits -->
+      <div class="sidebar-section-title" style="text-decoration: underline;">SUMMITS</div>
+      <div>
+        <div class="sidebar-item">
+          <div class="dot-mini" style="background:#f5c518;box-shadow:0 0 4px rgba(245,197,24,0.9);"></div>
+          <div class="body">
+            <div class="title">Rehoboth Beach Turtle Celebration</div>
+            <div class="sub">📍 Rehoboth Delware, United States</div>
+          </div>
+        </div>
+        <div class="sidebar-item">
+          <div class="dot-mini" style="background:#f5c518;box-shadow:0 0 4px rgba(245,197,24,0.9);"></div>
+          <div class="body">
+            <div class="title">WATER SUMMIT - Mississipi Headwater</div>
+            <div class="sub">📍 Itasca, United States</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
 </section>
 
 <!-- Mobile stats bar (visible only on small screens) -->
@@ -424,6 +511,12 @@
 
   loadNews();
   loadEvents();
+
+  // Broadcast play stub — no-op for now (placeholder content).
+  function playBroadcast() {
+    // TODO: wire to a YouTube embed once a real broadcast is selected.
+    console.log('Broadcast clicked — placeholder.');
+  }
 </script>
 </body>
 </html>
