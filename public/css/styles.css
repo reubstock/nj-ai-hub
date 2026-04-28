@@ -567,7 +567,13 @@ nav {
   background: var(--navy);
   overflow: hidden;
 }
-#hero-map { position: absolute; inset: 0; }
+#hero-map {
+  position: absolute;
+  inset: 0;
+  z-index: 0; /* creates a stacking context so Leaflet's internal panes
+                 (z-index 200-800) don't cover the sidebars sitting at
+                 z-index 10+ in the parent .map-hero stacking context */
+}
 
 @keyframes pulse-ring {
   0%   { transform: scale(1);   opacity: 0.85; }
@@ -619,7 +625,7 @@ nav {
   position: absolute;
   left: 0; top: 0; bottom: 0;
   width: 280px;
-  z-index: 10;
+  z-index: 100;
   display: flex;
   flex-direction: column;
   gap: 0.7rem;
@@ -709,7 +715,7 @@ nav {
   position: absolute;
   right: 0; top: 90px; bottom: 1rem;
   width: 280px;
-  z-index: 10;
+  z-index: 100;
   display: flex;
   flex-direction: column;
   gap: 0.7rem;
