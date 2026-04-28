@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NJ AI Hub — Events</title>
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body>
+
+<nav>
+  <a href="/" class="nav-brand"><span class="brand-nj">NJ</span><span class="brand-ai">AI</span><span class="brand-hub">HUB</span></a>
+  <ul class="nav-links">
+    <li><a href="/news.html">News</a></li>
+    <li><a href="/events.html">Events</a></li>
+    <li><a href="/location.html">Location</a></li>
+    <li><a href="/team.html">Our Team</a></li>
+    <li><a href="/about.html" class="nav-cta">Contact Us</a></li>
+  </ul>
+  <button class="nav-toggle" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+</nav>
+
+<section class="section">
+  <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:1.4rem;margin-bottom:0.6rem;">
+    <div>
+      <p class="section-label">On The Horizon</p>
+      <h1 class="section-title">Events at the Hub</h1>
+      <div class="section-rule"></div>
+      <p class="section-subtitle" style="margin:0;">Summits, demo days, workshops, and convenings across the NJ AI ecosystem.</p>
+    </div>
+    <button class="btn btn-primary" onclick="openSubmitModal()">+ Submit an Event</button>
+  </div>
+
+  <div class="cards-grid" id="events-list" style="margin-top:2.5rem;">
+    <div class="loading">Loading events…</div>
+  </div>
+</section>
+
+<!-- Submit event modal -->
+<div class="modal-backdrop" id="submit-modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeSubmitModal()" aria-label="Close">&times;</button>
+    <h3>Submit an Event</h3>
+    <form id="submit-form">
+      <div class="form-group"><label>Title *</label><input type="text" name="title" required /></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+        <div class="form-group"><label>Date *</label><input type="date" name="date" required /></div>
+        <div class="form-group"><label>Time</label><input type="time" name="time" /></div>
+      </div>
+      <div class="form-group"><label>Location *</label><input type="text" name="location" placeholder="e.g. NJ AI Hub, West Windsor" required /></div>
+      <div class="form-group"><label>Type</label>
+        <select name="type">
+          <option value="">Choose…</option>
+          <option>Summit</option>
+          <option>Workshop</option>
+          <option>Demo Day</option>
+          <option>Convening</option>
+          <option>Talk</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Description</label><textarea name="description" style="min-height:90px;"></textarea></div>
+      <button type="submit" class="btn btn-primary" style="width:100%;">Submit Event</button>
+    </form>
+    <div id="submit-success" style="display:none;text-align:center;padding:1.5rem 0;">
+      <p style="font-size:1.05rem;color:var(--navy);">✓ Event submitted. Our team will review it shortly.</p>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <div>
+      <div class="footer-brand"><span class="nj">NJ</span><span class="ai">AI</span> HUB</div>
+      <p class="footer-tagline">Alexander Road, West Windsor, NJ</p>
+    </div>
+    <ul class="footer-links">
+      <li><a href="/news.html">News</a></li>
+      <li><a href="/events.html">Events</a></li>
+      <li><a href="/location.html">Location</a></li>
+      <li><a href="/team.html">Team</a></li>
+      <li><a href="/about.html">Contact</a></li>
+    </ul>
+  </div>
+  <div class="footer-bottom">© <span id="year"></span> NJ AI Hub.</div>
+</footer>
+
+<script src="/js/nav.js"></script>
+<script>
+  document.getElementById('year').textContent = new Date().getFullYear();
+  const fmtDate = d => d ? new Date(d + 'T00:00:00').toLocaleDateString('en', { day: 'numeric', month: 'long', year: 'numeric' }) : '';
+
+  async function loadEvents() {
+    const el = document.getElementById('events-list');
+    try {
+      const res = await fetch('/api/events');
+      const items = await res.json();
+      if (!items.length) {
+        el.innerHTML = '<div class="empty-state"><div class="empty-icon">🗓</div><p>No events scheduled.</p></div>';
+        return;
+      }
+      el.innerHTML = items.map(ev => `
+        <article class="card">
+          <div class="card-body">
+            <div class="card-meta">${ev.type || 'Event'} · ${fmtDate(ev.date)}${ev.time ? ' · ' + ev.time : ''}</div>
+            <h3 class="card-title">${ev.title}</h3>
+            <p class="card-summary">📍 ${ev.location}</p>
+            ${ev.description ? `<p style="color:var(--muted);font-size:0.92rem;margin:0 0 1rem;">${ev.description}</p>` : ''}
+          </div>
+        </article>
+      `).join('');
+    } catch (e) { console.error(e); el.innerHTML = '<div class="empty-state">Failed to load events.</div>'; }
+  }
+  loadEvents();
+
+  function openSubmitModal()  { document.getElementById('submit-modal').classList.add('open'); }
+  function closeSubmitModal() {
+    document.getElementById('submit-modal').classList.remove('open');
+    document.getElementById('submit-form').reset();
+    document.getElementById('submit-form').style.display = '';
+    document.getElementById('submit-success').style.display = 'none';
+  }
+  document.getElementById('submit-form').addEventListener('submit', async e => {
+    e.preventDefault();
+    const data = Object.fromEntries(new FormData(e.target));
+    const btn = e.target.querySelector('button[type="submit"]');
+    btn.textContent = 'Submitting…'; btn.disabled = true;
+    try {
+      const res = await fetch('/api/events', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+      if (!res.ok) throw new Error('Server error');
+      document.getElementById('submit-form').style.display = 'none';
+      document.getElementById('submit-success').style.display = 'block';
+      loadEvents();
+    } catch (err) {
+      alert('Something went wrong. Please try again.');
+      btn.textContent = 'Submit Event'; btn.disabled = false;
+    }
+  });
+</script>
+</body>
+</html>

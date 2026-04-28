@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NJ AI Hub — Home</title>
+  <meta name="description" content="The NJ AI Hub unites AI researchers, industry leaders, startups, and collaborators to grow the AI ecosystem in New Jersey." />
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body>
+
+<nav>
+  <a href="/" class="nav-brand">
+    <span class="brand-nj">NJ</span><span class="brand-ai">AI</span><span class="brand-hub">HUB</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="/news.html">News</a></li>
+    <li><a href="/events.html">Events</a></li>
+    <li><a href="/location.html">Location</a></li>
+    <li><a href="/team.html">Our Team</a></li>
+    <li><a href="/about.html" class="nav-cta">Contact Us</a></li>
+  </ul>
+  <button class="nav-toggle" aria-label="Toggle menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<section class="hero">
+  <div class="hero-inner">
+    <div class="logo-mark" style="margin-bottom:1.6rem;">
+      <span class="nj">NJ</span><span class="ai">AI</span><span class="hub">HUB</span>
+    </div>
+    <h1>Where New Jersey builds the future of AI.</h1>
+    <p class="lede">
+      The NJ AI Hub unites AI researchers, industry leaders, startups, and
+      collaborators to grow the AI ecosystem in New Jersey — enabling
+      world-class research and development, spurring innovation, and training
+      an AI-boosted workforce in collaboration with New Jersey educational
+      institutions.
+    </p>
+    <div style="display:flex;gap:1rem;flex-wrap:wrap;">
+      <a href="/about.html" class="hero-cta">Get Involved</a>
+      <a href="/events.html" class="hero-cta secondary">Upcoming Events</a>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div style="max-width:760px;">
+    <p class="section-label">Our Mission</p>
+    <h2 class="section-title">A statewide engine for AI research, innovation, and workforce training.</h2>
+    <div class="section-rule"></div>
+    <p style="font-size:1.08rem;color:var(--muted);line-height:1.7;">
+      Founded by Princeton University, the New Jersey Economic Development
+      Authority, Microsoft, and CoreWeave, the Hub brings together the people,
+      capital, and infrastructure to advance AI research and development,
+      ethical use of AI for positive social impact, and applied-AI workforce
+      training — in collaboration with universities, community colleges, and
+      vocational schools across the state.
+    </p>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat">
+      <div class="stat-value"><span class="accent">$72M+</span></div>
+      <div class="stat-label">Founding partner investment</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value">4</div>
+      <div class="stat-label">Founding partners</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value">500+</div>
+      <div class="stat-label">Leaders at inaugural summit</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value"><span class="accent">2025</span></div>
+      <div class="stat-label">Doors opened</div>
+    </div>
+  </div>
+</section>
+
+<div class="section-soft-wrap">
+  <section class="section">
+    <p class="section-label">Latest News</p>
+    <h2 class="section-title">From the Hub</h2>
+    <div class="section-rule"></div>
+    <div class="cards-grid" id="home-news">
+      <div class="loading">Loading news…</div>
+    </div>
+    <div style="text-align:center;margin-top:2.5rem;">
+      <a href="/news.html" class="btn btn-outline">All News</a>
+    </div>
+  </section>
+</div>
+
+<section class="section">
+  <p class="section-label">On The Horizon</p>
+  <h2 class="section-title">Upcoming Events</h2>
+  <div class="section-rule"></div>
+  <div class="cards-grid" id="home-events">
+    <div class="loading">Loading events…</div>
+  </div>
+  <div style="text-align:center;margin-top:2.5rem;">
+    <a href="/events.html" class="btn btn-outline">All Events</a>
+  </div>
+</section>
+
+<div class="section-soft-wrap">
+  <section class="section" style="text-align:center;">
+    <p class="section-label">Founding Partners</p>
+    <h2 class="section-title">Built with the best in research and industry</h2>
+    <div class="section-rule" style="margin-left:auto;margin-right:auto;"></div>
+    <div class="partners-strip" id="partner-list">
+      <span class="partner-logo">Princeton University</span>
+      <span class="partner-logo">NJ<span class="accent">EDA</span></span>
+      <span class="partner-logo">Microsoft</span>
+      <span class="partner-logo">CoreWeave</span>
+    </div>
+  </section>
+</div>
+
+<section class="cta-banner">
+  <h2>Ready to build with us?</h2>
+  <p>Researchers, founders, students, and partners — there are many ways to plug into the Hub.</p>
+  <a href="/about.html#contact" class="btn btn-primary">Get In Touch</a>
+</section>
+
+<footer>
+  <div class="footer-inner">
+    <div>
+      <div class="footer-brand"><span class="nj">NJ</span><span class="ai">AI</span> HUB</div>
+      <p class="footer-tagline">Alexander Road, West Windsor, NJ</p>
+    </div>
+    <ul class="footer-links">
+      <li><a href="/news.html">News</a></li>
+      <li><a href="/events.html">Events</a></li>
+      <li><a href="/location.html">Location</a></li>
+      <li><a href="/team.html">Team</a></li>
+      <li><a href="/about.html">Contact</a></li>
+    </ul>
+  </div>
+  <div class="footer-bottom">
+    © <span id="year"></span> NJ AI Hub. A partnership of Princeton University, NJEDA, Microsoft, and CoreWeave.
+  </div>
+</footer>
+
+<script src="/js/nav.js"></script>
+<script>
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  function fmtDate(d) {
+    if (!d) return '';
+    return new Date(d + 'T00:00:00').toLocaleDateString('en', { day: 'numeric', month: 'long', year: 'numeric' });
+  }
+
+  async function loadNews() {
+    try {
+      const res = await fetch('/api/news');
+      const items = await res.json();
+      const el = document.getElementById('home-news');
+      if (!items.length) { el.innerHTML = '<div class="empty-state">No news yet.</div>'; return; }
+      el.innerHTML = items.slice(0, 3).map(n => `
+        <a class="card" href="/news.html#n${n.id}" style="text-decoration:none;color:inherit;">
+          <div class="card-image"></div>
+          <div class="card-body">
+            <div class="card-meta">${fmtDate(n.date)}</div>
+            <h3 class="card-title">${n.title}</h3>
+            <p class="card-summary">${n.summary || ''}</p>
+            <span class="card-link">Read more</span>
+          </div>
+        </a>
+      `).join('');
+    } catch (e) { console.error(e); }
+  }
+
+  async function loadEvents() {
+    try {
+      const res = await fetch('/api/events?upcoming=true');
+      const items = await res.json();
+      const el = document.getElementById('home-events');
+      if (!items.length) {
+        el.innerHTML = '<div class="empty-state"><div class="empty-icon">🗓</div><p>No upcoming events.</p></div>';
+        return;
+      }
+      el.innerHTML = items.slice(0, 3).map(ev => `
+        <div class="card">
+          <div class="card-body">
+            <div class="card-meta">${ev.type || 'Event'} · ${fmtDate(ev.date)}</div>
+            <h3 class="card-title">${ev.title}</h3>
+            <p class="card-summary">📍 ${ev.location}</p>
+            <p style="color:var(--muted);font-size:0.92rem;margin:0 0 1rem;">${ev.description || ''}</p>
+            <a class="card-link" href="/events.html">View details</a>
+          </div>
+        </div>
+      `).join('');
+    } catch (e) { console.error(e); }
+  }
+
+  loadNews();
+  loadEvents();
+</script>
+</body>
+</html>

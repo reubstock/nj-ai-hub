@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NJ AI Hub — Location</title>
+  <link rel="stylesheet" href="/css/styles.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <style>
+    /* Custom marker — orange dot with pulse */
+    @keyframes pulse-ring {
+      0%   { transform: scale(1);   opacity: 0.85; }
+      70%  { transform: scale(2.6); opacity: 0;   }
+      100% { transform: scale(2.6); opacity: 0;   }
+    }
+    .nj-marker { display: flex; align-items: center; justify-content: center; }
+    .nj-marker .ring {
+      position: absolute; width: 16px; height: 16px; border-radius: 50%;
+      background: rgba(245, 124, 0, 0.5);
+      animation: pulse-ring 2s ease-out infinite;
+    }
+    .nj-marker .dot {
+      position: relative; width: 16px; height: 16px; border-radius: 50%;
+      background: #f57c00; border: 2px solid #fff;
+      box-shadow: 0 0 8px rgba(245, 124, 0, 0.8);
+    }
+    .partner-marker .dot { background: #4a90d9; box-shadow: 0 0 8px rgba(74, 144, 217, 0.8); }
+    .partner-marker .ring { background: rgba(74, 144, 217, 0.4); }
+    .map-popup .leaflet-popup-content-wrapper {
+      background: #0b1d3a; color: #fff; border-radius: 10px; padding: 0;
+    }
+    .map-popup .leaflet-popup-content { margin: 0; padding: 0.85rem 1rem; }
+    .map-popup .leaflet-popup-tip { background: #0b1d3a; }
+    .map-popup h4 { margin: 0 0 0.3rem; color: #fff; font-size: 1rem; }
+    .map-popup p  { margin: 0; color: rgba(255,255,255,0.85); font-size: 0.85rem; }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="nav-brand"><span class="brand-nj">NJ</span><span class="brand-ai">AI</span><span class="brand-hub">HUB</span></a>
+  <ul class="nav-links">
+    <li><a href="/news.html">News</a></li>
+    <li><a href="/events.html">Events</a></li>
+    <li><a href="/location.html">Location</a></li>
+    <li><a href="/team.html">Our Team</a></li>
+    <li><a href="/about.html" class="nav-cta">Contact Us</a></li>
+  </ul>
+  <button class="nav-toggle" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+</nav>
+
+<section class="section">
+  <p class="section-label">Where We Are</p>
+  <h1 class="section-title">In the heart of New Jersey</h1>
+  <div class="section-rule"></div>
+  <p class="section-subtitle">
+    The NJ AI Hub is located on Alexander Road in West Windsor, in space
+    provided by Princeton University — at the center of New Jersey’s research
+    and innovation corridor.
+  </p>
+
+  <div id="location-map"></div>
+
+  <div class="location-info-card">
+    <h3>NJ AI Hub</h3>
+    <p>📍 Alexander Road, West Windsor, NJ</p>
+    <p>🏛 Space provided by Princeton University</p>
+    <p style="margin-top:0.8rem;">
+      <a class="btn btn-secondary" href="https://www.google.com/maps/search/?api=1&query=Alexander+Road+West+Windsor+NJ" target="_blank" rel="noopener">Open in Google Maps</a>
+    </p>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-inner">
+    <div>
+      <div class="footer-brand"><span class="nj">NJ</span><span class="ai">AI</span> HUB</div>
+      <p class="footer-tagline">Alexander Road, West Windsor, NJ</p>
+    </div>
+    <ul class="footer-links">
+      <li><a href="/news.html">News</a></li>
+      <li><a href="/events.html">Events</a></li>
+      <li><a href="/location.html">Location</a></li>
+      <li><a href="/team.html">Team</a></li>
+      <li><a href="/about.html">Contact</a></li>
+    </ul>
+  </div>
+  <div class="footer-bottom">© <span id="year"></span> NJ AI Hub.</div>
+</footer>
+
+<script src="/js/nav.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  // ── New Jersey-focused map ──
+  // Centered on NJ with slices of NY (north) and PA/DE (west/south) visible.
+  // NJ bounding box: ~38.93–41.36 lat, -75.56 to -73.89 lng.
+  // We use fitBounds with a margin so neighboring states peek into the frame.
+  const map = L.map('location-map', {
+    zoomControl: true,
+    scrollWheelZoom: false,
+    attributionControl: true,
+  });
+
+  const njBounds = L.latLngBounds(
+    [38.85, -75.75],   // SW — slice of DE / PA south
+    [41.45, -73.75]    // NE — slice of NY / NYC
+  );
+  map.fitBounds(njBounds);
+
+  // Light, modern basemap (Carto Voyager — full color, blue water)
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+    maxZoom: 18,
+    subdomains: 'abcd',
+    attribution: '&copy; OpenStreetMap &copy; CARTO'
+  }).addTo(map);
+
+  // Hub marker (West Windsor)
+  const hubIcon = L.divIcon({
+    className: '',
+    html: `<div class="nj-marker"><div class="ring"></div><div class="dot"></div></div>`,
+    iconSize: [20, 20],
+    iconAnchor: [10, 10],
+    popupAnchor: [0, -12],
+  });
+  const hubMarker = L.marker([40.3260, -74.6273], { icon: hubIcon }).addTo(map)
+    .bindPopup(`
+      <h4>NJ AI Hub</h4>
+      <p>Alexander Road, West Windsor, NJ</p>
+    `, { className: 'map-popup', maxWidth: 240 });
+
+  // Partner / context markers across NJ
+  const partnerIcon = L.divIcon({
+    className: '',
+    html: `<div class="nj-marker partner-marker"><div class="ring"></div><div class="dot"></div></div>`,
+    iconSize: [20, 20],
+    iconAnchor: [10, 10],
+    popupAnchor: [0, -12],
+  });
+  const partnerPoints = [
+    { name: 'Princeton University',  desc: 'Founding partner',          lat: 40.3431, lng: -74.6551 },
+    { name: 'NJEDA',                  desc: 'Founding partner — Trenton', lat: 40.2206, lng: -74.7597 },
+    { name: 'Rutgers University',    desc: 'Higher-ed partner — New Brunswick', lat: 40.5008, lng: -74.4474 },
+    { name: 'NJIT',                   desc: 'Higher-ed partner — Newark',  lat: 40.7421, lng: -74.1782 },
+    { name: 'CoreWeave HQ',          desc: 'Founding partner — Roseland', lat: 40.8202, lng: -74.2918 },
+  ];
+  partnerPoints.forEach(p => {
+    L.marker([p.lat, p.lng], { icon: partnerIcon }).addTo(map)
+      .bindPopup(`<h4>${p.name}</h4><p>${p.desc}</p>`, { className: 'map-popup', maxWidth: 220 });
+  });
+
+  hubMarker.openPopup();
+</script>
+</body>
+</html>

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NJ AI Hub — News</title>
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body>
+
+<nav>
+  <a href="/" class="nav-brand"><span class="brand-nj">NJ</span><span class="brand-ai">AI</span><span class="brand-hub">HUB</span></a>
+  <ul class="nav-links">
+    <li><a href="/news.html">News</a></li>
+    <li><a href="/events.html">Events</a></li>
+    <li><a href="/location.html">Location</a></li>
+    <li><a href="/team.html">Our Team</a></li>
+    <li><a href="/about.html" class="nav-cta">Contact Us</a></li>
+  </ul>
+  <button class="nav-toggle" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+</nav>
+
+<section class="section">
+  <p class="section-label">From the Hub</p>
+  <h1 class="section-title">News & Announcements</h1>
+  <div class="section-rule"></div>
+  <p class="section-subtitle">Updates from the NJ AI Hub and its founding partners.</p>
+
+  <div class="cards-grid" id="news-list">
+    <div class="loading">Loading news…</div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-inner">
+    <div>
+      <div class="footer-brand"><span class="nj">NJ</span><span class="ai">AI</span> HUB</div>
+      <p class="footer-tagline">Alexander Road, West Windsor, NJ</p>
+    </div>
+    <ul class="footer-links">
+      <li><a href="/news.html">News</a></li>
+      <li><a href="/events.html">Events</a></li>
+      <li><a href="/location.html">Location</a></li>
+      <li><a href="/team.html">Team</a></li>
+      <li><a href="/about.html">Contact</a></li>
+    </ul>
+  </div>
+  <div class="footer-bottom">© <span id="year"></span> NJ AI Hub.</div>
+</footer>
+
+<script src="/js/nav.js"></script>
+<script>
+  document.getElementById('year').textContent = new Date().getFullYear();
+  const fmtDate = d => d ? new Date(d + 'T00:00:00').toLocaleDateString('en', { day: 'numeric', month: 'long', year: 'numeric' }) : '';
+
+  async function loadNews() {
+    const el = document.getElementById('news-list');
+    try {
+      const res = await fetch('/api/news');
+      const items = await res.json();
+      if (!items.length) { el.innerHTML = '<div class="empty-state">No news yet.</div>'; return; }
+      el.innerHTML = items.map(n => `
+        <article class="card" id="n${n.id}">
+          <div class="card-image"></div>
+          <div class="card-body">
+            <div class="card-meta">${fmtDate(n.date)}${n.source ? ' · ' + n.source : ''}</div>
+            <h3 class="card-title">${n.title}</h3>
+            <p class="card-summary">${n.summary || ''}</p>
+            ${n.body ? `<p style="color:var(--muted);font-size:0.92rem;margin:0 0 1rem;">${n.body}</p>` : ''}
+            ${n.url ? `<a class="card-link" href="${n.url}" target="_blank" rel="noopener">Read full article</a>` : ''}
+          </div>
+        </article>
+      `).join('');
+      // Scroll to anchor if present
+      if (location.hash) {
+        const target = document.querySelector(location.hash);
+        if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    } catch (e) { console.error(e); el.innerHTML = '<div class="empty-state">Failed to load news.</div>'; }
+  }
+  loadNews();
+</script>
+</body>
+</html>
