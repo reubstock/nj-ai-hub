@@ -67,7 +67,10 @@
       const res = await fetch('/api/team');
       const items = await res.json();
       if (!items.length) { el.innerHTML = '<div class="empty-state">Team coming soon.</div>'; return; }
-      el.innerHTML = items.map(m => `
+      el.innerHTML = items.map(m => {
+        const bioParas = (m.bio || '').split('\n\n').filter(p => p.trim())
+          .map(p => `<p class="team-bio">${p.trim()}</p>`).join('');
+        return `
         <article class="team-card">
           <div class="team-avatar">
             ${m.image
@@ -77,9 +80,9 @@
           </div>
           <h3 class="team-name">${m.name}</h3>
           <p class="team-role">${m.role}</p>
-          <p class="team-bio">${m.bio || ''}</p>
-        </article>
-      `).join('');
+          ${bioParas}
+        </article>`;
+      }).join('');
     } catch (e) { console.error(e); el.innerHTML = '<div class="empty-state">Failed to load team.</div>'; }
   }
   loadTeam();

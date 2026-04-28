@@ -118,50 +118,56 @@ const team = [
     id: nextId('team'),
     name: 'Liat Krawczyk',
     role: 'Executive Director',
-    bio: "Previously served as Senior Advisor for Workforce Strategy and Head of Child Care at the U.S. Department of Commerce's CHIPS Program Office, supporting a $300M workforce effort aligned with $37B in semiconductor investments. Before that, Vice President of Innovation Industries at the NYC Economic Development Corporation, where she led workforce strategy across emerging tech, the green economy, and life sciences. Founded the NYCEDC Childcare Innovation Lab and co-led Cyber NYC, a $100M public-private initiative. Over a decade of experience across government, startups, and nonprofits at the intersection of technology, workforce, the care economy, and industrial policy.",
+    bio: `Liat Krawczyk is the inaugural Executive Director of the New Jersey AI Hub, a first-of-its-kind public-private partnership between Princeton University, the New Jersey Economic Development Authority (NJEDA), Microsoft, and CoreWeave, designed to accelerate innovation in artificial intelligence and position New Jersey as a global leader in the field. Its aim is to bring together AI researchers, entrepreneurs, industry, educational institutions, and the public sector to advance world-class research and development; drive transformative AI innovation; empower the workforce for the AI era; and shape the future of responsible AI deployment.
+
+Previously, she served as Senior Advisor for Workforce Strategy and Head of Child Care at the U.S. Department of Commerce's CHIPS Program Office, supporting the rollout of a $300M workforce effort aligned with $37B in semiconductor investments and shaping the care economy strategy. Before that, Liat was Vice President of Innovation Industries at the NYC Economic Development Corporation, where she led workforce strategy across emerging tech, the green economy, and life sciences. She founded the NYCEDC Childcare Innovation Lab and co-led Cyber NYC, a $100M public-private initiative focused on inclusive talent pipelines and R&D to grow NYC's cybersecurity ecosystem. She also served as Head of Strategy for a machine learning PropTech startup.
+
+Liat brings over a decade of experience across government, startups, and nonprofits at the intersection of technology, workforce, the care economy and industrial policy, driving the creation of inclusive innovation ecosystems.`,
     image: '/images/team-liat.jpg',
+  },
+  {
+    id: nextId('team'),
+    name: 'Brian Chol Soo Standen, MBA',
+    role: 'Director of Innovation Programs',
+    bio: `Brian Chol Soo Standen is an experienced digital technology and innovation leader operating at the intersection of artificial intelligence, advanced computing, and enterprise-scale transformation. He brings deep expertise in building and governing venture-style innovation portfolios, translating emerging technologies into commercial and operational value, and connecting startups, research institutions, and large enterprises through high-impact collaboration frameworks.
+
+Brian's background spans AI/ML, quantum computing, advanced analytics, robotics, digital platforms, and next-generation R&D systems. He is known for designing investor-style governance models, overseeing multi-million-dollar innovation portfolios, and fostering trusted partnerships that accelerate applied research and scalable deployment. His leadership approach emphasizes ecosystem thinking—combining technical depth, commercial discipline, and execution rigor to move technologies from exploration to measurable real-world impact.
+
+Brian holds an MBA from the University of North Carolina's Kenan-Flagler Business School and a Bachelor of Arts in Anthropology and English from the University of Colorado, Boulder, where he graduated magna cum laude in Anthropology. His work includes patented innovation in advanced computing and published contributions in quantum computing, reflecting a career that bridges deep technical exploration with real-world application.`,
+    image: '/images/team-standen.jpg',
+  },
+  {
+    id: nextId('team'),
+    name: 'Marie Pryor, PhD',
+    role: 'Microsoft TechSpark Lead',
+    bio: `Dr. Marie Pryor leads Microsoft's TechSpark initiative at the NJ AI Hub, and works to accelerate innovation and economic opportunity across New Jersey. Marie leads strategic future of work initiatives that advance AI innovation and skilling, while fostering economic growth and opportunity. Her efforts focus on increasing access to digital skills and employment opportunities, particularly through public-private partnerships that scale workforce programs.
+
+As a seasoned leader in workforce innovation and technology strategy, with a career deeply anchored in New Jersey, her previous work spans corporate, public sector, and nonprofit domains. Marie has worked extensively to leverage Federal WIOA funding to expand nonprofit workforce programs, helping underserved populations gain access to training and meaningful employment. She has applied innovative technology tools and data systems to streamline service coordination, assess policy interventions, and foster continuous improvement across sectors.
+
+Marie holds a PhD in Public Affairs from the University of Central Florida, a Masters in Criminal Justice from John Jay College CUNY, and is a graduate of Rutgers University.`,
+    image: '/images/team-pryor.jpg',
   },
   {
     id: nextId('team'),
     name: 'Jeffrey Oakman',
     role: 'Director of Policy and Operations',
-    bio: "Has been working on building the NJ AI Hub since September 2024, serving first under the Provost's Office at Princeton and now at the Hub itself as Director of Policy and Operations. Focuses on establishing the Hub as the center of gravity for AI innovation in the state and growing its role in promoting responsible and ethical use of AI. Supports program development in workforce development and training, AI research and development, and startup innovation. Previously worked in Governor Murphy's office for five years as a Senior Policy Advisor with a portfolio including economic development and planning, housing, workforce development, and innovation policy. Career in government, nonprofit, and private sectors focused on creative financing for economic and community development.",
+    bio: `Jeffrey Oakman has been working on building the NJ AI Hub since September 2024, serving first under the Provost's Office at Princeton and now at the Hub itself as Director of Policy and Operations. He focuses on establishing the Hub as the center of gravity for AI innovation in the state and growing its role in promoting responsible and ethical use of AI. He also supports program development in workforce development and training, AI research and development, and startup innovation.
+
+Previously Jeffrey worked in Governor Murphy's office for five years as a Senior Policy Advisor, with a portfolio including economic development and planning, housing, workforce development, and innovation policy. His career both in government and in the nonprofit and private sectors has focused on using creative financing to realize impactful economic and community development projects. He graduated from Rice University and holds a Masters in Public Affairs and Urban/Regional Planning from Princeton University SPIA, where he also worked as an Associate Director in the Graduate Program Office from 2016 to 2019.`,
     image: '/images/team-oakman.jpg',
-  },
-  {
-    id: nextId('team'),
-    name: 'Craig Arnold',
-    role: 'Vice Dean for Innovation',
-    bio: 'Princeton University. Connects Hub activities to research commercialization and faculty entrepreneurship.',
-    image: '/images/team-arnold.jpg',
-  },
-  {
-    id: nextId('team'),
-    name: 'Corey Sanders',
-    role: 'CoreWeave SVP of Strategy',
-    bio: "Visiting lecturer in Princeton's Department of Computer Science. NJ native, Class of 2004.",
-    image: '/images/team-sanders.jpg',
   },
   {
     id: nextId('team'),
     name: 'Jordan Nottke',
     role: 'Operations Manager and Executive Assistant',
-    bio: 'Oversees operations, programming, and growth of an AI ecosystem for founders, researchers, and industry partners. Brings over 15 years of experience launching and scaling multi-unit hospitality and coworking operations. Has led the development and operation of more than a dozen coworking spaces across major U.S. markets, overseeing site selection, buildout, and supporting infrastructure. Prior to joining the Hub, held leadership roles with companies including Zuul and Kitchen United, early leaders in the ghost kitchen space. Earlier in his career was part of the founding team at Honey Butter Fried Chicken in Chicago. Founded Properly Seasoned Hospitality, advising New Jersey-based startups and nonprofits on concept development, team and workforce growth, and the foundations required to scale.',
+    bio: `Jordan Nottke is the Operations Manager and Executive Assistant of the New Jersey AI Hub, where he oversees operations, programming, and growth of an AI ecosystem for founders, researchers, and industry partners.
+
+He brings over 15 years of experience launching and scaling multi-unit hospitality and coworking operations. He has led the development and operation of more than a dozen coworking spaces across major U.S. markets, overseeing site selection, buildout, and supporting infrastructure. Earlier in his career, he was part of the founding team at Honey Butter Fried Chicken in Chicago.
+
+Prior to joining the Hub, Jordan held leadership roles with companies including Zuul and Kitchen United, early leaders in the ghost kitchen space, where he focused on new market development and building operational systems at scale. He also founded Properly Seasoned Hospitality, advising New Jersey-based startups and nonprofits on concept development, team and workforce growth, and the foundations required to scale. He holds a degree in International Relations and Leadership from Claremont McKenna College.
+
+At the New Jersey AI Hub, he designs spaces, programs, and partnerships that foster collaboration, connect founders and institutions to critical resources, and position the Hub as a center of gravity for AI activity in New Jersey.`,
     image: '/images/team-nottke.jpg',
-  },
-  {
-    id: nextId('team'),
-    name: 'Dr. Marie Pryor',
-    role: 'Microsoft TechSpark Lead',
-    bio: "Leads Microsoft's TechSpark initiative at the NJ AI Hub and works to accelerate innovation and economic opportunity across New Jersey. Leads strategic future of work initiatives that advance AI innovation and skilling, while fostering economic growth and opportunity. Efforts focus on increasing access to digital skills and employment opportunities, particularly through public-private partnerships that scale workforce programs. Seasoned leader in workforce innovation and technology strategy with a career deeply anchored in New Jersey. Previous work spans corporate, public sector, and nonprofit domains. Has worked extensively to leverage Federal WIOA funding to expand nonprofit workforce programs, helping underserved populations gain access to training and meaningful employment.",
-    image: '/images/team-pryor.jpg',
-  },
-  {
-    id: nextId('team'),
-    name: 'Jonathan Mercantini, PhD',
-    role: 'NJ AI Hub Fellow, Kean University',
-    bio: "Fellow at the NJ AI Hub representing Kean University. Collaborating with colleagues across the state on AI teaching, learning, scholarship, and ethical applications. Has taught in Kean University's Department of History since 2007. Elected vice chair of the NJ Council for the Humanities (NJCH) Board of Trustees in 2025.",
-    image: '/images/team-mercantini.jpg',
   },
 ];
 
