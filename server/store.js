@@ -160,7 +160,7 @@ const team = [
     id: nextId('team'),
     name: 'Jonathan Mercantini, PhD',
     role: 'NJ AI Hub Fellow, Kean University',
-    bio: 'Fellow at the NJ AI Hub representing Kean University. Collaborating with colleagues across the state on AI teaching, learning, scholarship, and ethical applications. Has taught in Kean University's Department of History since 2007. Elected vice chair of the NJ Council for the Humanities (NJCH) Board of Trustees in 2025.',
+    bio: "Fellow at the NJ AI Hub representing Kean University. Collaborating with colleagues across the state on AI teaching, learning, scholarship, and ethical applications. Has taught in Kean University's Department of History since 2007. Elected vice chair of the NJ Council for the Humanities (NJCH) Board of Trustees in 2025.",
     image: '/images/team-mercantini.jpg',
   },
 ];
