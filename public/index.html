@@ -11,8 +11,44 @@
 <body>
 
 <nav>
-  <a href="/" class="nav-brand">
-    <span class="brand-nj">NJ</span><span class="brand-ai">AI</span><span class="brand-hub">HUB</span>
+  <a href="/" class="nav-brand" aria-label="NJ AI Hub — Home" style="line-height:0;">
+    <svg viewBox="0 0 168 52" height="38" xmlns="http://www.w3.org/2000/svg" style="display:block;">
+      <!-- NJ -->
+      <text x="1" y="44" font-family="'Arial Black',Arial,sans-serif" font-weight="900" font-size="46" fill="#4a90d9">NJ</text>
+      <!-- NJ state outline -->
+      <path d="M72,7 L85,4 L92,8 L104,17 L106,26 L105,36 L100,44 L92,50 L82,45 L73,35 L71,19 Z"
+            fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.82)" stroke-width="1.3" stroke-linejoin="round"/>
+      <!-- Network lines -->
+      <g stroke="rgba(255,255,255,0.3)" stroke-width="0.9">
+        <line x1="86" y1="9"  x2="98" y2="12"/>
+        <line x1="86" y1="9"  x2="78" y2="20"/>
+        <line x1="98" y1="12" x2="103" y2="22"/>
+        <line x1="103" y1="22" x2="88" y2="22"/>
+        <line x1="88" y1="22" x2="78" y2="20"/>
+        <line x1="88" y1="22" x2="88" y2="33"/>
+        <line x1="103" y1="22" x2="103" y2="33"/>
+        <line x1="103" y1="33" x2="88" y2="33"/>
+        <line x1="88"  y1="33" x2="78" y2="30"/>
+        <line x1="88"  y1="33" x2="93" y2="44"/>
+        <line x1="78"  y1="20" x2="78" y2="30"/>
+      </g>
+      <!-- Network nodes -->
+      <circle cx="86"  cy="9"  r="2.2" fill="white"/>
+      <circle cx="98"  cy="12" r="2.2" fill="white"/>
+      <circle cx="103" cy="22" r="2.2" fill="white"/>
+      <circle cx="103" cy="33" r="2.2" fill="white"/>
+      <circle cx="88"  cy="22" r="2.2" fill="white"/>
+      <circle cx="78"  cy="20" r="2.2" fill="white"/>
+      <circle cx="78"  cy="30" r="2.2" fill="white"/>
+      <circle cx="93"  cy="44" r="2.2" fill="white"/>
+      <!-- Hub marker (Princeton / West Windsor) — orange -->
+      <circle cx="88" cy="33" r="4"   fill="#f57c00"/>
+      <circle cx="88" cy="33" r="2.1" fill="#ffb347"/>
+      <!-- AI -->
+      <text x="110" y="44" font-family="'Arial Black',Arial,sans-serif" font-weight="900" font-size="46" fill="#f57c00">AI</text>
+      <!-- HUB -->
+      <text x="113" y="52" font-family="Arial,sans-serif" font-weight="500" font-size="9.5" fill="rgba(255,255,255,0.8)" letter-spacing="4.5">HUB</text>
+    </svg>
   </a>
   <ul class="nav-links">
     <li><a href="/news.html">News</a></li>
@@ -36,7 +72,7 @@
   <div id="hero-map"></div>
 
   <div id="map-sidebar">
-    <!-- Latest Broadcast -->
+    <!-- Latest Broadcast + Latest News (combined panel) -->
     <div class="sidebar-card">
       <div class="sidebar-label">Latest Broadcast</div>
       <div class="broadcast-thumb">
@@ -55,9 +91,20 @@
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowfullscreen></iframe>
       </div>
-    </div>
 
-    <!-- Across NJ -->
+      <div style="border-top:1px solid rgba(255,255,255,0.1);margin:0.75rem 0 0.55rem;"></div>
+
+      <a class="sidebar-news-card" id="sidebar-news" href="/news.html" style="text-decoration:none;display:block;">
+        <div class="sidebar-label">Latest News</div>
+        <div class="news-thumb"><img id="sidebar-news-img" src="" alt="" /></div>
+        <h4 class="news-title" id="sidebar-news-title">Loading…</h4>
+        <div class="news-date" id="sidebar-news-date"></div>
+      </a>
+    </div>
+  </div>
+
+  <!-- Across NJ — temporarily centered on the map -->
+  <div id="map-sidebar-center">
     <div class="sidebar-card scroll">
       <div class="sidebar-label">Across New Jersey</div>
 
@@ -84,16 +131,8 @@
     </div>
   </div>
 
-  <!-- ── Right-side panel (placeholder content from YES Movement) ─ -->
+  <!-- ── Right-side panel ─ -->
   <div id="map-sidebar-right">
-
-    <!-- Latest News -->
-    <a class="sidebar-card sidebar-news-card" id="sidebar-news" href="/news.html" style="text-decoration:none;">
-      <div class="sidebar-label">Latest News</div>
-      <div class="news-thumb"><img id="sidebar-news-img" src="" alt="" /></div>
-      <h4 class="news-title" id="sidebar-news-title">Loading…</h4>
-      <div class="news-date" id="sidebar-news-date"></div>
-    </a>
 
     <!-- Movement in Progress -->
     <div class="sidebar-card scroll">

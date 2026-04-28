@@ -725,6 +725,22 @@ nav {
 #map-sidebar-right > * { pointer-events: auto; }
 #map-sidebar-right .scroll { overflow-y: auto; flex: 1; }
 
+/* Center panel — Across NJ (temporary) */
+#map-sidebar-center {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  top: 0; bottom: 0;
+  width: 270px;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  padding: 1rem 0;
+  pointer-events: none;
+}
+#map-sidebar-center > * { pointer-events: auto; }
+#map-sidebar-center .scroll { overflow-y: auto; flex: 1; }
+
 .broadcast-thumb {
   position: relative;
   aspect-ratio: 16 / 9;
@@ -775,7 +791,8 @@ nav {
 
 @media (max-width: 760px) {
   #map-sidebar,
-  #map-sidebar-right { display: none; }
+  #map-sidebar-right,
+  #map-sidebar-center { display: none; }
   #mobile-map-stats { display: flex; }
   .map-hero { height: 60vh; min-height: 380px; }
 }
