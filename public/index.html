@@ -36,13 +36,26 @@
   <div id="hero-map"></div>
 
   <div id="map-sidebar">
-    <!-- Latest News -->
-    <a class="sidebar-card sidebar-news-card" id="sidebar-news" href="/news.html" style="text-decoration:none;">
-      <div class="sidebar-label">Latest News</div>
-      <div class="news-thumb"><img id="sidebar-news-img" src="" alt="" /></div>
-      <h4 class="news-title" id="sidebar-news-title">Loading…</h4>
-      <div class="news-date" id="sidebar-news-date"></div>
-    </a>
+    <!-- Latest Broadcast -->
+    <div class="sidebar-card">
+      <div class="sidebar-label">Latest Broadcast</div>
+      <div class="broadcast-thumb">
+        <div id="broadcast-thumb-inner" onclick="playBroadcast()" style="position:absolute;inset:0;cursor:pointer;">
+          <img id="broadcast-img"
+               src="https://i.ytimg.com/vi/Z9GEv2eM04g/maxresdefault.jpg"
+               onerror="this.onerror=null;this.src='https://i.ytimg.com/vi/Z9GEv2eM04g/hqdefault.jpg';"
+               alt="Latest broadcast" />
+          <div class="play">
+            <svg viewBox="0 0 52 52"><polygon points="14,8 44,26 14,44" fill="white"/></svg>
+          </div>
+        </div>
+        <iframe id="broadcast-iframe"
+                src=""
+                style="display:none;position:absolute;inset:0;width:100%;height:100%;border:none;"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen></iframe>
+      </div>
+    </div>
 
     <!-- Across NJ -->
     <div class="sidebar-card scroll">
@@ -74,26 +87,13 @@
   <!-- ── Right-side panel (placeholder content from YES Movement) ─ -->
   <div id="map-sidebar-right">
 
-    <!-- Latest Broadcast -->
-    <div class="sidebar-card">
-      <div class="sidebar-label">Latest Broadcast</div>
-      <div class="broadcast-thumb">
-        <div id="broadcast-thumb-inner" onclick="playBroadcast()" style="position:absolute;inset:0;cursor:pointer;">
-          <img id="broadcast-img"
-               src="https://i.ytimg.com/vi/Z9GEv2eM04g/maxresdefault.jpg"
-               onerror="this.onerror=null;this.src='https://i.ytimg.com/vi/Z9GEv2eM04g/hqdefault.jpg';"
-               alt="Latest broadcast" />
-          <div class="play">
-            <svg viewBox="0 0 52 52"><polygon points="14,8 44,26 14,44" fill="white"/></svg>
-          </div>
-        </div>
-        <iframe id="broadcast-iframe"
-                src=""
-                style="display:none;position:absolute;inset:0;width:100%;height:100%;border:none;"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowfullscreen></iframe>
-      </div>
-    </div>
+    <!-- Latest News -->
+    <a class="sidebar-card sidebar-news-card" id="sidebar-news" href="/news.html" style="text-decoration:none;">
+      <div class="sidebar-label">Latest News</div>
+      <div class="news-thumb"><img id="sidebar-news-img" src="" alt="" /></div>
+      <h4 class="news-title" id="sidebar-news-title">Loading…</h4>
+      <div class="news-date" id="sidebar-news-date"></div>
+    </a>
 
     <!-- Movement in Progress -->
     <div class="sidebar-card scroll">
