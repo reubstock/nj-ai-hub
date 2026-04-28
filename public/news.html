@@ -61,7 +61,7 @@
       if (!items.length) { el.innerHTML = '<div class="empty-state">No news yet.</div>'; return; }
       el.innerHTML = items.map(n => `
         <article class="card" id="n${n.id}">
-          <div class="card-image"></div>
+          <div class="card-image">${n.image ? `<img src="${n.image}" alt="${n.title}" loading="lazy" />` : ''}</div>
           <div class="card-body">
             <div class="card-meta">${fmtDate(n.date)}${n.source ? ' · ' + n.source : ''}</div>
             <h3 class="card-title">${n.title}</h3>

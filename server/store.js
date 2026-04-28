@@ -4,6 +4,15 @@
 let _id = { news: 0, events: 0, team: 0, partners: 0, contacts: 0 };
 const nextId = (k) => ++_id[k];
 
+// Unsplash photos (free to hotlink, themed to each story)
+const IMG = {
+  ribbon:      'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=900&q=80&auto=format&fit=crop',
+  discovery:   'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=900&q=80&auto=format&fit=crop',
+  fund:        'https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=900&q=80&auto=format&fit=crop',
+  accelerator: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=900&q=80&auto=format&fit=crop',
+  director:    'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=900&q=80&auto=format&fit=crop',
+};
+
 const news = [
   {
     id: nextId('news'),
@@ -12,7 +21,7 @@ const news = [
     body: 'New Jersey Governor Phil Murphy joined Princeton University President Christopher L. Eisgruber and representatives from Microsoft, CoreWeave, and the New Jersey Economic Development Authority (NJEDA) to officially open the NJ AI Hub, a state-of-the-art, flexible space designed to foster innovation in artificial intelligence. The new facility, located in space provided by the University on Alexander Road in West Windsor, attracted a standing-room-only crowd for the ribbon cutting.',
     date: '2025-03-28',
     source: 'Princeton University, Office of Communications',
-    image: '/images/news-ribbon.jpg',
+    image: IMG.ribbon,
     url: 'https://www.princeton.edu/news/2025/03/28/founding-partners-unveil-nj-ai-hub-center-innovation',
   },
   {
@@ -22,7 +31,7 @@ const news = [
     body: 'Microsoft will bring its Discovery AI platform to the NJ AI Hub, allowing researchers to analyze vast amounts of scientific data, simulate experiments, and discover new materials or solutions much faster than traditional methods.',
     date: '2025-04-15',
     source: 'NJ AI Hub',
-    image: '/images/news-microsoft.jpg',
+    image: IMG.discovery,
   },
   {
     id: nextId('news'),
@@ -31,7 +40,7 @@ const news = [
     body: 'The New Jersey Economic Development Authority and CoreWeave have together created a $20M AI Hub Fund to back early-stage AI companies operating in the state.',
     date: '2025-05-08',
     source: 'NJEDA',
-    image: '/images/news-fund.jpg',
+    image: IMG.fund,
   },
   {
     id: nextId('news'),
@@ -40,7 +49,7 @@ const news = [
     body: 'Plug and Play will operate the NJ AI Hub’s regional AI Accelerator, leveraging its global network to attract world-class startups to New Jersey while elevating local talent.',
     date: '2025-06-20',
     source: 'NJ AI Hub',
-    image: '/images/news-accelerator.jpg',
+    image: IMG.accelerator,
   },
   {
     id: nextId('news'),
@@ -49,7 +58,7 @@ const news = [
     body: 'Liat Krawczyk will lead the NJ AI Hub as its first executive director, overseeing programs in research, commercialization, accelerator operations, and workforce development.',
     date: '2025-02-12',
     source: 'NJ AI Hub',
-    image: '/images/news-liat.jpg',
+    image: IMG.director,
   },
 ];
 
