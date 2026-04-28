@@ -11,7 +11,7 @@
 <nav>
   <a href="/" class="nav-brand" aria-label="NJ AI Hub — Home" style="line-height:0;"><svg viewBox="0 0 168 52" height="38" xmlns="http://www.w3.org/2000/svg" style="display:block;"><text x="1" y="44" font-family="'Arial Black',Arial,sans-serif" font-weight="900" font-size="46" fill="#4a90d9">NJ</text><path d="M72,7 L85,4 L92,8 L104,17 L106,26 L105,36 L100,44 L92,50 L82,45 L73,35 L71,19 Z" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.82)" stroke-width="1.3" stroke-linejoin="round"/><g stroke="rgba(255,255,255,0.3)" stroke-width="0.9"><line x1="86" y1="9" x2="98" y2="12"/><line x1="86" y1="9" x2="78" y2="20"/><line x1="98" y1="12" x2="103" y2="22"/><line x1="103" y1="22" x2="88" y2="22"/><line x1="88" y1="22" x2="78" y2="20"/><line x1="88" y1="22" x2="88" y2="33"/><line x1="103" y1="22" x2="103" y2="33"/><line x1="103" y1="33" x2="88" y2="33"/><line x1="88" y1="33" x2="78" y2="30"/><line x1="88" y1="33" x2="93" y2="44"/><line x1="78" y1="20" x2="78" y2="30"/></g><circle cx="86" cy="9" r="2.2" fill="white"/><circle cx="98" cy="12" r="2.2" fill="white"/><circle cx="103" cy="22" r="2.2" fill="white"/><circle cx="103" cy="33" r="2.2" fill="white"/><circle cx="88" cy="22" r="2.2" fill="white"/><circle cx="78" cy="20" r="2.2" fill="white"/><circle cx="78" cy="30" r="2.2" fill="white"/><circle cx="93" cy="44" r="2.2" fill="white"/><circle cx="88" cy="33" r="4" fill="#f57c00"/><circle cx="88" cy="33" r="2.1" fill="#ffb347"/><text x="110" y="44" font-family="'Arial Black',Arial,sans-serif" font-weight="900" font-size="46" fill="#f57c00">AI</text><text x="113" y="52" font-family="Arial,sans-serif" font-weight="500" font-size="9.5" fill="rgba(255,255,255,0.8)" letter-spacing="4.5">HUB</text></svg></a>
   <ul class="nav-links">
-    <li><a href="/news.html">News</a></li>
+    <li><a href="/news.html" class="active">News</a></li>
     <li><a href="/events.html">Events</a></li>
     <li class="nav-dropdown">
       <a href="/about.html" class="nav-dropdown-trigger">About <span class="caret">▾</span></a>
@@ -26,13 +26,24 @@
 </nav>
 
 <section class="section">
-  <p class="section-label">From the Hub</p>
-  <h1 class="section-title">News & Announcements</h1>
-  <div class="section-rule"></div>
-  <p class="section-subtitle">Updates from the NJ AI Hub and its founding partners.</p>
+  <div class="news-columns">
 
-  <div class="cards-grid" id="news-list">
-    <div class="loading">Loading news…</div>
+    <!-- ── Left: NJAIC News ── -->
+    <div class="news-col">
+      <p class="section-label">Hub Updates</p>
+      <h2 class="news-col-heading">NJAIC News</h2>
+      <div class="section-rule"></div>
+      <div id="news-hub"><div class="loading">Loading…</div></div>
+    </div>
+
+    <!-- ── Right: AI Latest ── -->
+    <div class="news-col">
+      <p class="section-label">Industry</p>
+      <h2 class="news-col-heading">AI Latest</h2>
+      <div class="section-rule"></div>
+      <div id="news-ai"><div class="loading">Loading…</div></div>
+    </div>
+
   </div>
 </section>
 
@@ -56,10 +67,15 @@
 <script src="/js/nav.js"></script>
 <script>
   document.getElementById('year').textContent = new Date().getFullYear();
-  const fmtDate = d => d ? new Date(d + 'T00:00:00').toLocaleDateString('en', { day: 'numeric', month: 'long', year: 'numeric' }) : '';
 
-  async function loadNews() {
-    const el = document.getElementById('news-list');
+  const fmtDate = d => d
+    ? new Date(d + (d.includes('T') ? '' : 'T00:00:00'))
+        .toLocaleDateString('en', { day: 'numeric', month: 'long', year: 'numeric' })
+    : '';
+
+  /* ── NJAIC Hub news (local API) ── */
+  async function loadHubNews() {
+    const el = document.getElementById('news-hub');
     try {
       const res = await fetch('/api/news');
       const items = await res.json();
@@ -76,14 +92,53 @@
           </div>
         </article>
       `).join('');
-      // Scroll to anchor if present
       if (location.hash) {
         const target = document.querySelector(location.hash);
         if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }
-    } catch (e) { console.error(e); el.innerHTML = '<div class="empty-state">Failed to load news.</div>'; }
+    } catch (e) {
+      console.error(e);
+      el.innerHTML = '<div class="empty-state">Failed to load news.</div>';
+    }
   }
-  loadNews();
+
+  /* ── AI Latest (VentureBeat AI via rss2json) ── */
+  async function loadAINews() {
+    const el = document.getElementById('news-ai');
+    try {
+      const feed = 'https://venturebeat.com/category/ai/feed/';
+      const url  = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feed)}&count=8`;
+      const res  = await fetch(url);
+      const data = await res.json();
+      if (!data.items || !data.items.length) throw new Error('empty feed');
+      el.innerHTML = data.items.map(item => {
+        const clean = (item.description || '')
+          .replace(/<[^>]+>/g, '')
+          .replace(/&nbsp;/g, ' ')
+          .trim()
+          .slice(0, 160);
+        return `
+          <article class="card">
+            ${item.thumbnail ? `<div class="card-image"><img src="${item.thumbnail}" alt="" loading="lazy" /></div>` : ''}
+            <div class="card-body">
+              <div class="card-meta">${fmtDate(item.pubDate)} · VentureBeat</div>
+              <h3 class="card-title">
+                <a href="${item.link}" target="_blank" rel="noopener"
+                   style="color:inherit;text-decoration:none;">${item.title}</a>
+              </h3>
+              ${clean ? `<p class="card-summary">${clean}…</p>` : ''}
+              <a class="card-link" href="${item.link}" target="_blank" rel="noopener">Read article</a>
+            </div>
+          </article>`;
+      }).join('');
+    } catch (e) {
+      console.error(e);
+      el.innerHTML = '<div class="empty-state">Could not load feed.</div>';
+    }
+  }
+
+  loadHubNews();
+  loadAINews();
 </script>
 </body>
 </html>

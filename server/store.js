@@ -118,14 +118,14 @@ const team = [
     id: nextId('team'),
     name: 'Liat Krawczyk',
     role: 'Executive Director',
-    bio: 'Inaugural executive director of the NJ AI Hub. Leads programs in research, commercialization, accelerator, and workforce development.',
+    bio: "Previously served as Senior Advisor for Workforce Strategy and Head of Child Care at the U.S. Department of Commerce's CHIPS Program Office, supporting a $300M workforce effort aligned with $37B in semiconductor investments. Before that, Vice President of Innovation Industries at the NYC Economic Development Corporation, where she led workforce strategy across emerging tech, the green economy, and life sciences. Founded the NYCEDC Childcare Innovation Lab and co-led Cyber NYC, a $100M public-private initiative. Over a decade of experience across government, startups, and nonprofits at the intersection of technology, workforce, the care economy, and industrial policy.",
     image: '/images/team-liat.jpg',
   },
   {
     id: nextId('team'),
     name: 'Jeffrey Oakman',
-    role: 'Senior Strategic AI Hub Project Manager',
-    bio: 'Office of the Provost, Princeton University. Has been central to bringing the Hub from announcement to opening.',
+    role: 'Director of Policy and Operations',
+    bio: "Has been working on building the NJ AI Hub since September 2024, serving first under the Provost's Office at Princeton and now at the Hub itself as Director of Policy and Operations. Focuses on establishing the Hub as the center of gravity for AI innovation in the state and growing its role in promoting responsible and ethical use of AI. Supports program development in workforce development and training, AI research and development, and startup innovation. Previously worked in Governor Murphy's office for five years as a Senior Policy Advisor with a portfolio including economic development and planning, housing, workforce development, and innovation policy. Career in government, nonprofit, and private sectors focused on creative financing for economic and community development.",
     image: '/images/team-oakman.jpg',
   },
   {
@@ -138,9 +138,30 @@ const team = [
   {
     id: nextId('team'),
     name: 'Corey Sanders',
-    role: 'CoreWeave Liaison',
-    bio: 'CoreWeave SVP of Strategy and visiting lecturer in Princeton’s Department of Computer Science. NJ native, Class of 2004.',
+    role: 'CoreWeave SVP of Strategy',
+    bio: "Visiting lecturer in Princeton's Department of Computer Science. NJ native, Class of 2004.",
     image: '/images/team-sanders.jpg',
+  },
+  {
+    id: nextId('team'),
+    name: 'Jordan Nottke',
+    role: 'Operations Manager and Executive Assistant',
+    bio: 'Oversees operations, programming, and growth of an AI ecosystem for founders, researchers, and industry partners. Brings over 15 years of experience launching and scaling multi-unit hospitality and coworking operations. Has led the development and operation of more than a dozen coworking spaces across major U.S. markets, overseeing site selection, buildout, and supporting infrastructure. Prior to joining the Hub, held leadership roles with companies including Zuul and Kitchen United, early leaders in the ghost kitchen space. Earlier in his career was part of the founding team at Honey Butter Fried Chicken in Chicago. Founded Properly Seasoned Hospitality, advising New Jersey-based startups and nonprofits on concept development, team and workforce growth, and the foundations required to scale.',
+    image: '/images/team-nottke.jpg',
+  },
+  {
+    id: nextId('team'),
+    name: 'Dr. Marie Pryor',
+    role: 'Microsoft TechSpark Lead',
+    bio: "Leads Microsoft's TechSpark initiative at the NJ AI Hub and works to accelerate innovation and economic opportunity across New Jersey. Leads strategic future of work initiatives that advance AI innovation and skilling, while fostering economic growth and opportunity. Efforts focus on increasing access to digital skills and employment opportunities, particularly through public-private partnerships that scale workforce programs. Seasoned leader in workforce innovation and technology strategy with a career deeply anchored in New Jersey. Previous work spans corporate, public sector, and nonprofit domains. Has worked extensively to leverage Federal WIOA funding to expand nonprofit workforce programs, helping underserved populations gain access to training and meaningful employment.",
+    image: '/images/team-pryor.jpg',
+  },
+  {
+    id: nextId('team'),
+    name: 'Jonathan Mercantini, PhD',
+    role: 'NJ AI Hub Fellow, Kean University',
+    bio: 'Fellow at the NJ AI Hub representing Kean University. Collaborating with colleagues across the state on AI teaching, learning, scholarship, and ethical applications. Has taught in Kean University's Department of History since 2007. Elected vice chair of the NJ Council for the Humanities (NJCH) Board of Trustees in 2025.',
+    image: '/images/team-mercantini.jpg',
   },
 ];
 
