@@ -6,6 +6,7 @@
   <title>NJ AI Hub — Home</title>
   <meta name="description" content="The NJ AI Hub unites AI researchers, industry leaders, startups, and collaborators to grow the AI ecosystem in New Jersey." />
   <link rel="stylesheet" href="/css/styles.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 </head>
 <body>
 
@@ -25,93 +26,114 @@
   </button>
 </nav>
 
-<section class="hero">
-  <div class="hero-inner">
-    <div class="logo-mark" style="margin-bottom:1.6rem;">
-      <span class="nj">NJ</span><span class="ai">AI</span><span class="hub">HUB</span>
-    </div>
-    <h1>Where New Jersey builds the future of AI.</h1>
-    <p class="lede">
-      The NJ AI Hub unites AI researchers, industry leaders, startups, and
-      collaborators to grow the AI ecosystem in New Jersey — enabling
-      world-class research and development, spurring innovation, and training
-      an AI-boosted workforce in collaboration with New Jersey educational
-      institutions.
-    </p>
-    <div style="display:flex;gap:1rem;flex-wrap:wrap;">
-      <a href="/about.html" class="hero-cta">Get Involved</a>
-      <a href="/events.html" class="hero-cta secondary">Upcoming Events</a>
+<!-- ── Hero map + sidebar ──────────────────────────────────────── -->
+<section class="map-hero">
+  <div id="hero-map"></div>
+
+  <div id="map-sidebar">
+    <!-- Latest News -->
+    <a class="sidebar-card sidebar-news-card" id="sidebar-news" href="/news.html" style="text-decoration:none;">
+      <div class="sidebar-label">Latest News</div>
+      <div class="news-thumb"><img id="sidebar-news-img" src="" alt="" /></div>
+      <h4 class="news-title" id="sidebar-news-title">Loading…</h4>
+      <div class="news-date" id="sidebar-news-date"></div>
+    </a>
+
+    <!-- Across NJ -->
+    <div class="sidebar-card scroll">
+      <div class="sidebar-label">Across New Jersey</div>
+
+      <div style="margin-bottom: 0.6rem; padding-bottom: 0.6rem; border-bottom: 1px solid rgba(255,255,255,0.08);">
+        <div class="legend-row">
+          <span class="label" style="color:#f57c00;">The Hub</span>
+          <span class="count" id="legend-count-hub">1</span>
+        </div>
+        <div class="legend-row">
+          <span class="label" style="color:#4a90d9;">Partners</span>
+          <span class="count" id="legend-count-partners">0</span>
+        </div>
+        <div class="legend-row">
+          <span class="label" style="color:#f5c518;">Events</span>
+          <span class="count" id="legend-count-events">0</span>
+        </div>
+      </div>
+
+      <div class="sidebar-section-title">Partners</div>
+      <div id="sidebar-partners" style="margin-bottom: 0.7rem;"></div>
+
+      <div class="sidebar-section-title">Upcoming Events</div>
+      <div id="sidebar-events"></div>
     </div>
   </div>
 </section>
 
+<!-- Mobile stats bar (visible only on small screens) -->
+<div id="mobile-map-stats">
+  <a href="/location.html" class="stat-item" style="color:#f57c00;">
+    Hub <span class="stat-badge">1</span>
+  </a>
+  <a href="/location.html" class="stat-item" style="color:#4a90d9;">
+    Partners <span class="stat-badge" id="mobile-count-partners">0</span>
+  </a>
+  <a href="/events.html" class="stat-item" style="color:#f5c518;">
+    Events <span class="stat-badge" id="mobile-count-events">0</span>
+  </a>
+</div>
+
+<!-- ── Mission ─────────────────────────────────────────────────── -->
 <section class="section">
   <div style="max-width:760px;">
     <p class="section-label">Our Mission</p>
     <h2 class="section-title">A statewide engine for AI research, innovation, and workforce training.</h2>
     <div class="section-rule"></div>
     <p style="font-size:1.08rem;color:var(--muted);line-height:1.7;">
-      Founded by Princeton University, the New Jersey Economic Development
-      Authority, Microsoft, and CoreWeave, the Hub brings together the people,
-      capital, and infrastructure to advance AI research and development,
-      ethical use of AI for positive social impact, and applied-AI workforce
-      training — in collaboration with universities, community colleges, and
-      vocational schools across the state.
+      The NJ AI Hub unites AI researchers, industry leaders, startups, and
+      collaborators to grow the AI ecosystem in New Jersey — enabling
+      world-class research and development, spurring innovation, and training
+      an AI-boosted workforce in collaboration with New Jersey educational
+      institutions.
     </p>
   </div>
 
   <div class="stats-grid">
-    <div class="stat">
-      <div class="stat-value"><span class="accent">$72M+</span></div>
-      <div class="stat-label">Founding partner investment</div>
-    </div>
-    <div class="stat">
-      <div class="stat-value">4</div>
-      <div class="stat-label">Founding partners</div>
-    </div>
-    <div class="stat">
-      <div class="stat-value">500+</div>
-      <div class="stat-label">Leaders at inaugural summit</div>
-    </div>
-    <div class="stat">
-      <div class="stat-value"><span class="accent">2025</span></div>
-      <div class="stat-label">Doors opened</div>
-    </div>
+    <div class="stat"><div class="stat-value"><span class="accent">$72M+</span></div><div class="stat-label">Founding partner investment</div></div>
+    <div class="stat"><div class="stat-value">4</div><div class="stat-label">Founding partners</div></div>
+    <div class="stat"><div class="stat-value">500+</div><div class="stat-label">Leaders at inaugural summit</div></div>
+    <div class="stat"><div class="stat-value"><span class="accent">2025</span></div><div class="stat-label">Doors opened</div></div>
   </div>
 </section>
 
+<!-- ── News ────────────────────────────────────────────────────── -->
 <div class="section-soft-wrap">
   <section class="section">
     <p class="section-label">Latest News</p>
     <h2 class="section-title">From the Hub</h2>
     <div class="section-rule"></div>
-    <div class="cards-grid" id="home-news">
-      <div class="loading">Loading news…</div>
-    </div>
+    <div class="cards-grid" id="home-news"><div class="loading">Loading news…</div></div>
     <div style="text-align:center;margin-top:2.5rem;">
       <a href="/news.html" class="btn btn-outline">All News</a>
     </div>
   </section>
 </div>
 
+<!-- ── Events ──────────────────────────────────────────────────── -->
 <section class="section">
   <p class="section-label">On The Horizon</p>
   <h2 class="section-title">Upcoming Events</h2>
   <div class="section-rule"></div>
-  <div class="cards-grid" id="home-events">
-    <div class="loading">Loading events…</div>
-  </div>
+  <div class="cards-grid" id="home-events"><div class="loading">Loading events…</div></div>
   <div style="text-align:center;margin-top:2.5rem;">
     <a href="/events.html" class="btn btn-outline">All Events</a>
   </div>
 </section>
 
+<!-- ── Partners ────────────────────────────────────────────────── -->
 <div class="section-soft-wrap">
   <section class="section" style="text-align:center;">
     <p class="section-label">Founding Partners</p>
     <h2 class="section-title">Built with the best in research and industry</h2>
     <div class="section-rule" style="margin-left:auto;margin-right:auto;"></div>
-    <div class="partners-strip" id="partner-list">
+    <div class="partners-strip">
       <span class="partner-logo">Princeton University</span>
       <span class="partner-logo">NJ<span class="accent">EDA</span></span>
       <span class="partner-logo">Microsoft</span>
@@ -120,6 +142,7 @@
   </section>
 </div>
 
+<!-- ── CTA ─────────────────────────────────────────────────────── -->
 <section class="cta-banner">
   <h2>Ready to build with us?</h2>
   <p>Researchers, founders, students, and partners — there are many ways to plug into the Hub.</p>
@@ -146,14 +169,203 @@
 </footer>
 
 <script src="/js/nav.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
   document.getElementById('year').textContent = new Date().getFullYear();
 
-  function fmtDate(d) {
-    if (!d) return '';
-    return new Date(d + 'T00:00:00').toLocaleDateString('en', { day: 'numeric', month: 'long', year: 'numeric' });
+  const fmtDate = d => d ? new Date(d + 'T00:00:00').toLocaleDateString('en', { day: 'numeric', month: 'long', year: 'numeric' }) : '';
+
+  // ── NJ-focused map ──
+  // Bounding box covers all of NJ with slices of NY (north), PA (west), DE (south).
+  const NJ_BOUNDS = L.latLngBounds([38.85, -75.75], [41.45, -73.75]);
+  const HUB_LATLNG = [40.3260, -74.6273]; // West Windsor
+
+  const heroMap = L.map('hero-map', {
+    zoomControl: false,
+    scrollWheelZoom: false,
+    dragging: true,
+    touchZoom: true,
+    doubleClickZoom: true,
+    keyboard: true,
+    attributionControl: false,
+    zoomSnap: 0.25,
+    zoomDelta: 0.5,
+  });
+  heroMap.fitBounds(NJ_BOUNDS, { padding: [20, 20] });
+  L.control.zoom({ position: 'topright' }).addTo(heroMap);
+
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+    maxZoom: 18,
+    subdomains: 'abcd',
+  }).addTo(heroMap);
+
+  // ── Marker registry + zoom-back behavior ──
+  window._markerRefs = {};
+  window._openPopupKeys = [];
+  window._zoomBackTimer = null;
+
+  function cancelZoomBack() {
+    if (window._zoomBackTimer) { clearTimeout(window._zoomBackTimer); window._zoomBackTimer = null; }
+  }
+  function scheduleZoomBack() {
+    cancelZoomBack();
+    window._zoomBackTimer = setTimeout(() => {
+      heroMap.flyToBounds(NJ_BOUNDS, { duration: 2.0, padding: [20, 20] });
+      window._zoomBackTimer = null;
+    }, 7000);
+  }
+  function openManagedPopup(key) {
+    const m = window._markerRefs[key];
+    if (!m || m.isPopupOpen()) return;
+    if (window._openPopupKeys.length >= 3) {
+      const oldKey = window._openPopupKeys.shift();
+      const oldM = window._markerRefs[oldKey];
+      if (oldM) oldM.closePopup();
+    }
+    window._openPopupKeys.push(key);
+    m.openPopup();
+  }
+  window._mapMarkerClick = function(key) {
+    cancelZoomBack();
+    const m = window._markerRefs[key];
+    if (!m) return;
+    heroMap.flyTo(m.getLatLng(), 9, { duration: 1.6 });
+    setTimeout(() => openManagedPopup(key), 500);
+    scheduleZoomBack();
+  };
+  heroMap.on('dragstart', cancelZoomBack);
+
+  function makeIcon(klass) {
+    return L.divIcon({
+      className: '',
+      html: `<div class="map-marker ${klass}"><div class="dot-wrap"><div class="ring"></div><div class="dot"></div></div></div>`,
+      iconSize: [22, 22],
+      iconAnchor: [11, 11],
+      popupAnchor: [0, -11],
+    });
   }
 
+  // ── Hub marker (always shown, highlighted) ──
+  const hubKey = 'hub-1';
+  const hubMarker = L.marker(HUB_LATLNG, { icon: makeIcon('hub-marker') }).addTo(heroMap);
+  hubMarker.bindPopup(`
+    <div class="popup-clickable" onclick="window._mapMarkerClick('${hubKey}')" style="min-width:200px;max-width:240px;">
+      <div style="font-family:Arial,sans-serif;font-size:0.65rem;letter-spacing:0.12em;text-transform:uppercase;color:#f57c00;margin-bottom:0.3rem;font-weight:700;">The Hub</div>
+      <h4>NJ AI Hub</h4>
+      <p>📍 Alexander Road, West Windsor</p>
+      <p>🏛 Hosted by Princeton University</p>
+      <a href="/location.html" onclick="event.stopPropagation()" style="display:inline-block;margin-top:0.5rem;font-size:0.72rem;color:#f57c00;text-decoration:none;">View location →</a>
+    </div>
+  `, { className: 'dark-popup', maxWidth: 260, autoClose: false, closeOnClick: false });
+  hubMarker.on('click', () => window._mapMarkerClick(hubKey));
+  window._markerRefs[hubKey] = hubMarker;
+
+  // ── Plot partners + events from API ──
+  async function plotMap() {
+    try {
+      const [partnersRes, eventsRes] = await Promise.all([
+        fetch('/api/partners'),
+        fetch('/api/events?upcoming=true'),
+      ]);
+      const partners = await partnersRes.json();
+      const events   = await eventsRes.json();
+
+      // Partner markers
+      partners.filter(p => p.lat && p.lng).forEach(p => {
+        const key = `partner-${p.id}`;
+        const m = L.marker([p.lat, p.lng], { icon: makeIcon('partner-marker') }).addTo(heroMap);
+        m.bindPopup(`
+          <div class="popup-clickable" onclick="window._mapMarkerClick('${key}')" style="min-width:200px;max-width:240px;">
+            <div style="font-family:Arial,sans-serif;font-size:0.65rem;letter-spacing:0.12em;text-transform:uppercase;color:#4a90d9;margin-bottom:0.3rem;font-weight:700;">Partner</div>
+            <h4>${p.name}</h4>
+            <p>${p.role || ''}</p>
+            ${p.url ? `<a href="${p.url}" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="display:inline-block;margin-top:0.5rem;font-size:0.72rem;color:#4a90d9;text-decoration:none;">Visit website →</a>` : ''}
+          </div>
+        `, { className: 'dark-popup', maxWidth: 260, autoClose: false, closeOnClick: false });
+        m.on('click', () => window._mapMarkerClick(key));
+        window._markerRefs[key] = m;
+      });
+
+      // Event markers
+      events.filter(e => e.lat && e.lng).forEach(ev => {
+        const key = `event-${ev.id}`;
+        const m = L.marker([ev.lat, ev.lng], { icon: makeIcon('event-marker') }).addTo(heroMap);
+        m.bindPopup(`
+          <div class="popup-clickable" onclick="window._mapMarkerClick('${key}')" style="min-width:200px;max-width:260px;">
+            <div style="font-family:Arial,sans-serif;font-size:0.65rem;letter-spacing:0.12em;text-transform:uppercase;color:#f5c518;margin-bottom:0.3rem;font-weight:700;">${ev.type || 'Event'}</div>
+            <h4>${ev.title}</h4>
+            <p>📅 ${fmtDate(ev.date)}${ev.time ? ' · ' + ev.time : ''}</p>
+            <p>📍 ${ev.location}</p>
+            ${ev.description ? `<p style="margin-top:0.4rem;">${ev.description}</p>` : ''}
+            <a href="/events.html" onclick="event.stopPropagation()" style="display:inline-block;margin-top:0.5rem;font-size:0.72rem;color:#f5c518;text-decoration:none;">All events →</a>
+          </div>
+        `, { className: 'dark-popup', maxWidth: 280, autoClose: false, closeOnClick: false });
+        m.on('click', () => window._mapMarkerClick(key));
+        window._markerRefs[key] = m;
+      });
+
+      // Update sidebar + counts
+      populateSidebar(partners, events);
+
+      // Auto-open the Hub popup after a beat
+      setTimeout(() => openManagedPopup(hubKey), 700);
+    } catch (e) {
+      console.error('Map data load failed:', e);
+    }
+  }
+
+  function populateSidebar(partners, events) {
+    document.getElementById('legend-count-partners').textContent = partners.filter(p => p.lat).length;
+    document.getElementById('legend-count-events').textContent = events.length;
+    document.getElementById('mobile-count-partners').textContent = partners.filter(p => p.lat).length;
+    document.getElementById('mobile-count-events').textContent = events.length;
+
+    const pEl = document.getElementById('sidebar-partners');
+    pEl.innerHTML = partners.length
+      ? partners.slice(0, 6).map(p => `
+          <div class="sidebar-item" onclick="window._mapMarkerClick('partner-${p.id}')">
+            <div class="dot-mini" style="background:#4a90d9;box-shadow:0 0 4px rgba(74,144,217,0.9);"></div>
+            <div class="body">
+              <div class="title">${p.name}</div>
+              <div class="sub">${p.role || ''}</div>
+            </div>
+          </div>
+        `).join('')
+      : '<div class="sub" style="color:rgba(255,255,255,0.4);font-size:0.7rem;">No partners yet</div>';
+
+    const eEl = document.getElementById('sidebar-events');
+    eEl.innerHTML = events.length
+      ? events.slice(0, 4).map(ev => `
+          <div class="sidebar-item" onclick="window._mapMarkerClick('event-${ev.id}')">
+            <div class="dot-mini" style="background:#f5c518;box-shadow:0 0 4px rgba(245,197,24,0.9);"></div>
+            <div class="body">
+              <div class="title">${ev.title}</div>
+              <div class="sub">${fmtDate(ev.date)} · ${ev.location}</div>
+            </div>
+          </div>
+        `).join('')
+      : '<div class="sub" style="color:rgba(255,255,255,0.4);font-size:0.7rem;">No upcoming events</div>';
+  }
+
+  plotMap();
+
+  // ── Latest news in sidebar ──
+  async function loadSidebarNews() {
+    try {
+      const res = await fetch('/api/news');
+      const items = await res.json();
+      if (!items.length) return;
+      const n = items[0];
+      document.getElementById('sidebar-news-title').textContent = n.title;
+      document.getElementById('sidebar-news-date').textContent = fmtDate(n.date);
+      const img = document.getElementById('sidebar-news-img');
+      if (n.image) { img.src = n.image; img.alt = n.title; }
+      document.getElementById('sidebar-news').href = '/news.html#n' + n.id;
+    } catch (e) {}
+  }
+  loadSidebarNews();
+
+  // ── News + events sections below ──
   async function loadNews() {
     try {
       const res = await fetch('/api/news');

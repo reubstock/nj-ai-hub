@@ -145,10 +145,12 @@ const team = [
 ];
 
 const partners = [
-  { id: nextId('partners'), name: 'Princeton University', role: 'Founding partner', logo: '/images/partner-princeton.png', url: 'https://www.princeton.edu' },
-  { id: nextId('partners'), name: 'NJEDA',                role: 'Founding partner', logo: '/images/partner-njeda.png',     url: 'https://www.njeda.gov' },
-  { id: nextId('partners'), name: 'Microsoft',            role: 'Founding partner', logo: '/images/partner-microsoft.png', url: 'https://www.microsoft.com' },
-  { id: nextId('partners'), name: 'CoreWeave',            role: 'Founding partner', logo: '/images/partner-coreweave.png', url: 'https://www.coreweave.com' },
+  { id: nextId('partners'), name: 'Princeton University', role: 'Founding partner — Princeton',         logo: '/images/partner-princeton.png', url: 'https://www.princeton.edu',  lat: 40.3431, lng: -74.6551 },
+  { id: nextId('partners'), name: 'NJEDA',                role: 'Founding partner — Trenton',           logo: '/images/partner-njeda.png',     url: 'https://www.njeda.gov',      lat: 40.2206, lng: -74.7597 },
+  { id: nextId('partners'), name: 'Microsoft',            role: 'Founding partner',                     logo: '/images/partner-microsoft.png', url: 'https://www.microsoft.com',  lat: null,    lng: null },
+  { id: nextId('partners'), name: 'CoreWeave',            role: 'Founding partner — Livingston HQ',     logo: '/images/partner-coreweave.png', url: 'https://www.coreweave.com',  lat: 40.7917, lng: -74.3147 },
+  { id: nextId('partners'), name: 'Rutgers University',   role: 'Higher-ed partner — New Brunswick',    logo: '/images/partner-rutgers.png',   url: 'https://www.rutgers.edu',    lat: 40.5008, lng: -74.4474 },
+  { id: nextId('partners'), name: 'NJIT',                 role: 'Higher-ed partner — Newark',           logo: '/images/partner-njit.png',      url: 'https://www.njit.edu',       lat: 40.7421, lng: -74.1782 },
 ];
 
 const contacts = [];
