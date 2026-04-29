@@ -554,20 +554,41 @@
     setTimeout(() => card.remove(), 380);
   }
 
-  // Zoom map to a notecard's location, then return after 8 s
+  // Zoom map to a notecard's location, then return after 8 s.
+  // If already zoomed in (different card), fly out to NJ overview first, then fly in.
+  window._cardFlyTimer = null;
+
   function zoomToCard(lat, lng, cardId) {
     cancelZoomBack();
+    // Cancel any pending two-step fly-in
+    if (window._cardFlyTimer) { clearTimeout(window._cardFlyTimer); window._cardFlyTimer = null; }
+
     const card = document.getElementById(cardId);
     if (card) {
       card.classList.add('zooming');
       setTimeout(() => card.classList.remove('zooming'), 450);
     }
-    heroMap.flyTo([lat, lng], 10, { duration: 1.5 });
+
+    const flyIn = () => heroMap.flyTo([lat, lng], 12, { duration: 1.5 });
+
+    if (heroMap.getZoom() > NJ_DEFAULT_ZOOM + 0.5) {
+      // Already zoomed in on another location — fly out to full NJ view first
+      heroMap.flyTo(NJ_DEFAULT_VIEW, NJ_DEFAULT_ZOOM, { duration: 1.2 });
+      window._cardFlyTimer = setTimeout(() => {
+        window._cardFlyTimer = null;
+        flyIn();
+      }, 1450);
+    } else {
+      flyIn();
+    }
+
     scheduleZoomBack();
   }
 
-  // Draw SVG triangular pointers (tip at dot → base at card lower-left edge)
+  // Draw SVG triangular pointers (tip at dot → base at card corner nearest the dot)
   function drawPointers(slots) {
+    const CARD_W = 190;
+    const BASE   = 14;   // triangle base width in px
     const container = document.getElementById('launch-cards');
     const NS = 'http://www.w3.org/2000/svg';
     const old = document.getElementById('lcard-pointers');
@@ -579,22 +600,33 @@
     svg.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible;';
     container.insertBefore(svg, container.firstChild);
 
-    const toRgba = (hex, a) => {
-      const r = parseInt(hex.slice(1,3),16), g = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16);
-      return `rgba(${r},${g},${b},${a})`;
-    };
-
     slots.forEach(s => {
       const card = document.getElementById(s.id);
       if (!card) return;
       const cx = parseFloat(card.style.left);
       const cy = parseFloat(card.style.top);
-      // Triangle: tip at dot, base 14 px wide along card's lower-left edge
+      const cw = CARD_W, ch = s.cardH;
+
+      // Four corners with their base-spread directions (inward along the edge)
+      const corners = [
+        { x: cx,      y: cy,      bx: cx + BASE, by: cy      }, // top-left  → spread right along top
+        { x: cx + cw, y: cy,      bx: cx+cw-BASE,by: cy      }, // top-right → spread left  along top
+        { x: cx,      y: cy + ch, bx: cx + BASE, by: cy + ch }, // bot-left  → spread right along bottom
+        { x: cx + cw, y: cy + ch, bx: cx+cw-BASE,by: cy + ch }, // bot-right → spread left  along bottom
+      ];
+
+      // Pick the corner closest to the dot
+      const closest = corners.reduce((best, c) => {
+        const d = Math.hypot(c.x - s.dotX, c.y - s.dotY);
+        return d < best.d ? { ...c, d } : best;
+      }, { ...corners[0], d: Infinity });
+
+      // Gray palette — visible on both light map and dark cards
       const poly = document.createElementNS(NS, 'polygon');
       poly.setAttribute('points',
-        `${s.dotX},${s.dotY} ${cx},${cy + s.cardH} ${cx + 14},${cy + s.cardH}`);
-      poly.setAttribute('fill',            toRgba(s.color, 0.18));
-      poly.setAttribute('stroke',          toRgba(s.color, 0.60));
+        `${s.dotX},${s.dotY} ${closest.x},${closest.y} ${closest.bx},${closest.by}`);
+      poly.setAttribute('fill',            'rgba(130,145,160,0.28)');
+      poly.setAttribute('stroke',          'rgba(100,115,130,0.72)');
       poly.setAttribute('stroke-width',    '1.5');
       poly.setAttribute('stroke-linejoin', 'round');
       svg.appendChild(poly);
