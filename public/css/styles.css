@@ -649,28 +649,25 @@ nav {
   background: rgba(11, 20, 38, 0.91);
   border: 1px solid rgba(255,255,255,0.14);
   border-radius: 10px;
-  overflow: visible;           /* allow ::after stem to show below card */
+  overflow: visible;
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   box-shadow: 0 8px 28px rgba(0,0,0,0.45);
   opacity: 0;
   transition: opacity 0.5s ease, transform 0.35s ease;
   pointer-events: none;
+  cursor: pointer;
 }
+@keyframes lcard-pulse {
+  0%   { transform: scale(1);    box-shadow: 0 8px 28px rgba(0,0,0,0.45); }
+  40%  { transform: scale(1.05); box-shadow: 0 14px 38px rgba(0,0,0,0.6); }
+  100% { transform: scale(1);    box-shadow: 0 8px 28px rgba(0,0,0,0.45); }
+}
+.launch-card.zooming { animation: lcard-pulse 0.4s ease; }
 .launch-cards.visible .launch-card { opacity: 1; pointer-events: auto; }
 .launch-card.dismissed { opacity: 0 !important; transform: translateY(8px); pointer-events: none !important; }
 
-/* Connector stem pointing from card bottom toward the marker dot */
-.launch-card::after {
-  content: '';
-  position: absolute;
-  bottom: -14px;
-  left: calc(50% + var(--stem-offset, 0px));
-  transform: translateX(-50%);
-  width: 1px;
-  height: 14px;
-  background: rgba(255,255,255,0.35);
-}
+/* SVG pointer triangle rendered per card; ::after stem is replaced */
 
 .lcard-photo { height: 76px; overflow: hidden; border-radius: 10px 10px 0 0; }
 .lcard-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
