@@ -105,36 +105,25 @@
     }
   }
 
-  /* ── AI Latest (Google News AI topic via rss2json) ── */
+  /* ── AI Latest (Google News AI topic — proxied via server) ── */
   async function loadAINews() {
     const el = document.getElementById('news-ai');
     try {
-      const feed = 'https://news.google.com/rss/topics/CAAqIAgKIhpDQkFTRFFvSEwyMHZNRzFyZWhJQ1pXNG9BQVAB?ceid=US:en&hl=en-US&gl=US';
-      const url  = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feed)}&count=8`;
-      const res  = await fetch(url);
-      const data = await res.json();
-      if (!data.items || !data.items.length) throw new Error('empty feed');
-      el.innerHTML = data.items.map(item => {
-        const source = item.source || (item.author ? item.author.replace(/\s*-\s*.*$/, '') : '') || 'Google News';
-        const clean  = (item.description || '')
-          .replace(/<[^>]+>/g, '')
-          .replace(/&nbsp;/g, ' ')
-          .trim()
-          .slice(0, 160);
-        return `
+      const res  = await fetch('/api/ai-news');
+      const items = await res.json();
+      if (!Array.isArray(items) || !items.length) throw new Error('empty feed');
+      el.innerHTML = items.map(item => `
           <article class="card">
-            ${item.thumbnail ? `<div class="card-image"><img src="${item.thumbnail}" alt="" loading="lazy" /></div>` : ''}
             <div class="card-body">
-              <div class="card-meta">${fmtDate(item.pubDate)}${source ? ' · ' + source : ''}</div>
+              <div class="card-meta">${fmtDate(item.pubDate)}${item.source ? ' · ' + item.source : ''}</div>
               <h3 class="card-title">
                 <a href="${item.link}" target="_blank" rel="noopener"
                    style="color:inherit;text-decoration:none;">${item.title}</a>
               </h3>
-              ${clean ? `<p class="card-summary">${clean}…</p>` : ''}
+              ${item.description ? `<p class="card-summary">${item.description}…</p>` : ''}
               <a class="card-link" href="${item.link}" target="_blank" rel="noopener">Read article</a>
             </div>
-          </article>`;
-      }).join('');
+          </article>`).join('');
     } catch (e) {
       console.error(e);
       el.innerHTML = '<div class="empty-state">Could not load feed.</div>';
