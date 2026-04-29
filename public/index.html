@@ -485,12 +485,42 @@
   // ── Plot partners + events from API ──
   async function plotMap() {
     try {
-      const [partnersRes, eventsRes] = await Promise.all([
+      const [partnersRes, eventsRes, legacyRes] = await Promise.all([
         fetch('/api/partners'),
         fetch('/api/events?upcoming=true'),
+        fetch('/api/legacy'),
       ]);
-      const partners = await partnersRes.json();
-      const events   = await eventsRes.json();
+      const partners   = await partnersRes.json();
+      const events     = await eventsRes.json();
+      const legacyAll  = await legacyRes.json();
+      // First, second, and last entries (sorted by date asc from API)
+      const legacyPinned = legacyAll.length >= 3
+        ? [legacyAll[0], legacyAll[1], legacyAll[legacyAll.length - 1]]
+        : legacyAll;
+
+      // Legacy markers (red)
+      legacyPinned.filter(l => l.lat && l.lng).forEach(l => {
+        const key = `legacy-${l.id}`;
+        const photoHtml = l.photo
+          ? `<div style="margin:-10px -14px 8px;border-radius:6px 6px 0 0;overflow:hidden;height:90px;">
+               <img src="${l.photo}" alt="${l.title}"
+                    style="width:100%;height:100%;object-fit:cover;display:block;" />
+             </div>`
+          : '';
+        const m = L.marker([l.lat, l.lng], { icon: makeIcon('legacy-marker') }).addTo(heroMap);
+        m.bindPopup(`
+          <div class="popup-clickable" onclick="window._mapMarkerClick('${key}')" style="min-width:200px;max-width:240px;">
+            ${photoHtml}
+            <div style="font-family:Arial,sans-serif;font-size:0.65rem;letter-spacing:0.12em;text-transform:uppercase;color:#ef4444;margin-bottom:0.3rem;font-weight:700;">Legacy</div>
+            <h4 style="margin:0 0 0.25rem;">${l.title}</h4>
+            <p style="margin:0 0 0.5rem;">📍 ${l.location || ''}</p>
+            <a href="/legacy.html#l${l.id}" onclick="event.stopPropagation()"
+               style="display:inline-block;font-size:0.72rem;color:#ef4444;text-decoration:none;">View entry →</a>
+          </div>
+        `, { className: 'dark-popup', maxWidth: 260, autoClose: false, closeOnClick: false });
+        m.on('click', () => window._mapMarkerClick(key));
+        window._markerRefs[key] = m;
+      });
 
       // Partner markers
       partners.filter(p => p.lat && p.lng).forEach(p => {
