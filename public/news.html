@@ -105,17 +105,18 @@
     }
   }
 
-  /* ── AI Latest (VentureBeat AI via rss2json) ── */
+  /* ── AI Latest (Google News AI topic via rss2json) ── */
   async function loadAINews() {
     const el = document.getElementById('news-ai');
     try {
-      const feed = 'https://venturebeat.com/category/ai/feed/';
+      const feed = 'https://news.google.com/rss/topics/CAAqIAgKIhpDQkFTRFFvSEwyMHZNRzFyZWhJQ1pXNG9BQVAB?ceid=US:en&hl=en-US&gl=US';
       const url  = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feed)}&count=8`;
       const res  = await fetch(url);
       const data = await res.json();
       if (!data.items || !data.items.length) throw new Error('empty feed');
       el.innerHTML = data.items.map(item => {
-        const clean = (item.description || '')
+        const source = item.source || (item.author ? item.author.replace(/\s*-\s*.*$/, '') : '') || 'Google News';
+        const clean  = (item.description || '')
           .replace(/<[^>]+>/g, '')
           .replace(/&nbsp;/g, ' ')
           .trim()
@@ -124,7 +125,7 @@
           <article class="card">
             ${item.thumbnail ? `<div class="card-image"><img src="${item.thumbnail}" alt="" loading="lazy" /></div>` : ''}
             <div class="card-body">
-              <div class="card-meta">${fmtDate(item.pubDate)} · VentureBeat</div>
+              <div class="card-meta">${fmtDate(item.pubDate)}${source ? ' · ' + source : ''}</div>
               <h3 class="card-title">
                 <a href="${item.link}" target="_blank" rel="noopener"
                    style="color:inherit;text-decoration:none;">${item.title}</a>
