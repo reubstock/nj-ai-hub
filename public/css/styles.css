@@ -641,7 +641,7 @@ nav {
   transform: translateX(-50%);
   display: flex;
   gap: 1rem;
-  z-index: 20;
+  z-index: 110;
   pointer-events: none;
   opacity: 0;
   transition: opacity 0.55s ease;
