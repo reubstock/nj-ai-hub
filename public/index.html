@@ -134,11 +134,14 @@
   <div id="map-sidebar-right">
 
     <!-- Hub Impacts -->
-    <div class="sidebar-card scroll">
-      <div class="sidebar-label">Hub Impacts</div>
+    <div class="sidebar-card" style="display:flex;flex-direction:column;min-height:0;overflow:hidden;">
 
-      <!-- Legend with counts -->
-      <div style="margin-bottom: 0.6rem; padding-bottom: 0.7rem; border-bottom: 1px solid rgba(255,255,255,0.08);">
+      <!-- ── Fixed header: label + legend ── -->
+      <div style="flex-shrink:0;">
+        <div class="sidebar-label">Hub Impacts</div>
+
+        <!-- Legend with counts -->
+        <div style="margin-bottom: 0.6rem; padding-bottom: 0.7rem; border-bottom: 1px solid rgba(255,255,255,0.08);">
         <div class="legend-row">
           <span class="label" style="color:#4a90d9;text-transform:uppercase;letter-spacing:0.1em;">R&amp;D</span>
           <span class="count">2</span>
@@ -160,6 +163,10 @@
           <span class="count">2</span>
         </div>
       </div>
+      </div><!-- end fixed header -->
+
+      <!-- ── Scrollable body ── -->
+      <div style="overflow-y:auto;flex:1;min-height:0;padding-right:2px;">
 
       <!-- R&D -->
       <div class="sidebar-section-title" style="text-decoration: underline;">R&amp;D</div>
@@ -248,7 +255,9 @@
           </div>
         </div>
       </div>
-    </div>
+
+      </div><!-- end scrollable body -->
+    </div><!-- end sidebar-card -->
 
   </div>
 </section>

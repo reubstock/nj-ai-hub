@@ -775,6 +775,8 @@ nav {
 }
 #map-sidebar-right > * { pointer-events: auto; }
 #map-sidebar-right .scroll { overflow-y: auto; flex: 1; }
+/* Hub Impacts card fills remaining sidebar height */
+#map-sidebar-right > .sidebar-card { flex: 1; min-height: 0; }
 
 /* Center panel — Across NJ (temporary) */
 #map-sidebar-center {
