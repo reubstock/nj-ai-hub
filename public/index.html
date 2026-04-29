@@ -661,12 +661,6 @@
       requestAnimationFrame(() => container.classList.add('visible'));
     });
 
-    // Auto-dismiss all after 14 s
-    setTimeout(() => {
-      container.style.transition = 'opacity 0.7s ease';
-      container.style.opacity = '0';
-      setTimeout(() => { container.innerHTML = ''; container.style.opacity = ''; }, 750);
-    }, 14000);
   }
 
   plotMap();
