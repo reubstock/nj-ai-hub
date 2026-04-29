@@ -578,13 +578,14 @@
   }
 
   function populateSidebar(partners, events) {
-    document.getElementById('legend-count-partners').textContent = partners.filter(p => p.lat).length;
-    document.getElementById('legend-count-events').textContent = events.length;
-    document.getElementById('mobile-count-partners').textContent = partners.filter(p => p.lat).length;
-    document.getElementById('mobile-count-events').textContent = events.length;
+    const setText = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+    setText('legend-count-partners', partners.filter(p => p.lat).length);
+    setText('legend-count-events',   events.length);
+    setText('mobile-count-partners', partners.filter(p => p.lat).length);
+    setText('mobile-count-events',   events.length);
 
     const pEl = document.getElementById('sidebar-partners');
-    pEl.innerHTML = partners.length
+    if (pEl) pEl.innerHTML = partners.length
       ? partners.slice(0, 6).map(p => `
           <div class="sidebar-item" onclick="window._mapMarkerClick('partner-${p.id}')">
             <div class="dot-mini" style="background:#4a90d9;box-shadow:0 0 4px rgba(74,144,217,0.9);"></div>
@@ -597,7 +598,7 @@
       : '<div class="sub" style="color:rgba(255,255,255,0.4);font-size:0.7rem;">No partners yet</div>';
 
     const eEl = document.getElementById('sidebar-events');
-    eEl.innerHTML = events.length
+    if (eEl) eEl.innerHTML = events.length
       ? events.slice(0, 4).map(ev => `
           <div class="sidebar-item" onclick="window._mapMarkerClick('event-${ev.id}')">
             <div class="dot-mini" style="background:#f5c518;box-shadow:0 0 4px rgba(245,197,24,0.9);"></div>
