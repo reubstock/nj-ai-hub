@@ -498,7 +498,8 @@
         ? [legacyAll[0], legacyAll[1], legacyAll[legacyAll.length - 1]]
         : legacyAll;
 
-      // Legacy markers (red)
+      // Legacy markers (red) — track the 2 oldest for auto-open on load
+      const autoOpenLegacyKeys = [];
       legacyPinned.filter(l => l.lat && l.lng).forEach(l => {
         const key = `legacy-${l.id}`;
         const photoHtml = l.photo
@@ -520,6 +521,10 @@
         `, { className: 'dark-popup', maxWidth: 260, autoClose: false, closeOnClick: false });
         m.on('click', () => window._mapMarkerClick(key));
         window._markerRefs[key] = m;
+        // Queue for auto-open if it's one of the 2 oldest legacy entries
+        if (l.id === legacyAll[0]?.id || l.id === legacyAll[1]?.id) {
+          autoOpenLegacyKeys.push(key);
+        }
       });
 
       // Partner markers
@@ -559,8 +564,11 @@
       // Update sidebar + counts
       populateSidebar(partners, events);
 
-      // Auto-open the Hub popup after a beat
+      // Auto-open Hub + 2 oldest legacy notecards on page load
       setTimeout(() => openManagedPopup(hubKey), 700);
+      autoOpenLegacyKeys.forEach((key, i) => {
+        setTimeout(() => openManagedPopup(key), 1400 + i * 700);
+      });
     } catch (e) {
       console.error('Map data load failed:', e);
     }
