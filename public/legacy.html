@@ -134,6 +134,9 @@
         .toLocaleDateString('en', { year: 'numeric', month: 'long', day: 'numeric' })
     : '';
 
+  /* ── Item cache — avoids passing raw data through onclick attributes ── */
+  let _itemCache = {};
+
   /* ── Load & render entries ── */
   async function loadLegacy() {
     const el = document.getElementById('legacy-list');
@@ -144,6 +147,8 @@
         el.innerHTML = '<div class="empty-state">No legacy entries yet. Add the first one!</div>';
         return;
       }
+      _itemCache = {};
+      items.forEach(item => { _itemCache[item.id] = item; });
       el.innerHTML = items.map(item => `
         <article class="card legacy-card" id="l${item.id}">
           ${item.photo ? `<div class="card-image"><img src="${item.photo}" alt="${item.title}" loading="lazy" /></div>` : ''}
@@ -153,7 +158,7 @@
             ${item.description ? `<p class="card-summary">${item.description}</p>` : ''}
             <div class="card-actions">
               ${item.link ? `<a class="card-link" href="${item.link}" target="_blank" rel="noopener">Learn more</a>` : ''}
-              <button class="card-edit-btn" onclick='openEditModal(${JSON.stringify(item)})'>Edit</button>
+              <button class="card-edit-btn" onclick="openEditModal(${item.id})">Edit</button>
             </div>
           </div>
         </article>
@@ -193,7 +198,9 @@
     document.getElementById('f-title').focus();
   }
 
-  function openEditModal(item) {
+  function openEditModal(id) {
+    const item = _itemCache[id];
+    if (!item) return;
     _editingId = item.id;
     _existingPhoto = item.photo || '';
     _photoData = null;
