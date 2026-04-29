@@ -133,6 +133,9 @@
   -->
 
   <!-- ── Right-side panel ─ -->
+  <!-- ── Launch notecards (auto-show on page open) ── -->
+  <div id="launch-cards" class="launch-cards"></div>
+
   <div id="map-sidebar-right">
 
     <!-- Hub Impacts -->
@@ -564,11 +567,11 @@
       // Update sidebar + counts
       populateSidebar(partners, events);
 
-      // Auto-open Hub + 2 oldest legacy notecards on page load
+      // Auto-open Hub map popup
       setTimeout(() => openManagedPopup(hubKey), 700);
-      autoOpenLegacyKeys.forEach((key, i) => {
-        setTimeout(() => openManagedPopup(key), 1400 + i * 700);
-      });
+
+      // Show launch notecards: Hub + 2 oldest legacy items
+      showLaunchCards(legacyAll.slice(0, 2));
     } catch (e) {
       console.error('Map data load failed:', e);
     }
@@ -605,6 +608,65 @@
           </div>
         `).join('')
       : '<div class="sub" style="color:rgba(255,255,255,0.4);font-size:0.7rem;">No upcoming events</div>';
+  }
+
+  // ── Launch notecards ──────────────────────────────────────────────
+  function dismissCard(id) {
+    const card = document.getElementById(id);
+    if (!card) return;
+    card.classList.add('dismissed');
+    setTimeout(() => card.remove(), 380);
+  }
+
+  function showLaunchCards(legacyItems) {
+    const container = document.getElementById('launch-cards');
+    if (!container) return;
+
+    const cards = [
+      {
+        id:    'lcard-hub',
+        label: 'THE HUB',
+        color: '#f57c00',
+        title: 'NJ AI Hub',
+        meta:  'Alexander Road, West Windsor',
+        href:  '/location.html',
+        photo: null,
+      },
+      ...legacyItems.map(l => ({
+        id:    `lcard-l${l.id}`,
+        label: 'LEGACY',
+        color: '#ef4444',
+        title: l.title,
+        meta:  l.location || '',
+        href:  `/legacy-detail.html?id=${l.id}`,
+        photo: l.photo || null,
+      })),
+    ];
+
+    container.innerHTML = cards.map(c => `
+      <div class="launch-card" id="${c.id}">
+        <button class="lcard-close" onclick="dismissCard('${c.id}')" aria-label="Dismiss">✕</button>
+        ${c.photo ? `<div class="lcard-photo"><img src="${c.photo}" alt="${c.title}" /></div>` : ''}
+        <div class="lcard-body">
+          <div class="lcard-label" style="color:${c.color};">${c.label}</div>
+          <div class="lcard-title">${c.title}</div>
+          ${c.meta ? `<div class="lcard-meta">📍 ${c.meta}</div>` : ''}
+          <a href="${c.href}" class="lcard-link" style="color:${c.color};border-color:${c.color};">View page →</a>
+        </div>
+      </div>
+    `).join('');
+
+    // Fade in
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => container.classList.add('visible'));
+    });
+
+    // Auto-dismiss all after 14 s
+    setTimeout(() => {
+      container.style.transition = 'opacity 0.7s ease';
+      container.style.opacity = '0';
+      setTimeout(() => { container.innerHTML = ''; container.style.opacity = ''; }, 750);
+    }, 14000);
   }
 
   plotMap();
