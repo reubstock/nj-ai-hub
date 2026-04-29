@@ -94,12 +94,10 @@
 
       <div style="border-top:1px solid rgba(255,255,255,0.1);margin:0.75rem 0 0.55rem;"></div>
 
-      <a class="sidebar-news-card" id="sidebar-news" href="/news.html" style="text-decoration:none;display:block;">
-        <div class="sidebar-label">Latest News</div>
-        <div class="news-thumb"><img id="sidebar-news-img" src="" alt="" /></div>
-        <h4 class="news-title" id="sidebar-news-title">Loading…</h4>
-        <div class="news-date" id="sidebar-news-date"></div>
-      </a>
+      <div class="sidebar-label">Latest News</div>
+      <div id="sidebar-news-list">
+        <div style="font-size:0.75rem;color:rgba(255,255,255,0.35);">Loading…</div>
+      </div>
     </div>
   </div>
 
@@ -551,12 +549,14 @@
       const res = await fetch('/api/news');
       const items = await res.json();
       if (!items.length) return;
-      const n = items[0];
-      document.getElementById('sidebar-news-title').textContent = n.title;
-      document.getElementById('sidebar-news-date').textContent = fmtDate(n.date);
-      const img = document.getElementById('sidebar-news-img');
-      if (n.image) { img.src = n.image; img.alt = n.title; }
-      document.getElementById('sidebar-news').href = '/news.html#n' + n.id;
+      const two = items.slice(0, 2);
+      document.getElementById('sidebar-news-list').innerHTML = two.map((n, i) => `
+        ${i > 0 ? '<div style="border-top:1px solid rgba(255,255,255,0.07);margin:0.45rem 0;"></div>' : ''}
+        <a class="sidebar-news-card" href="/news.html#n${n.id}" style="text-decoration:none;display:block;">
+          <h4 class="news-title">${n.title}</h4>
+          <div class="news-date">${fmtDate(n.date)}</div>
+        </a>
+      `).join('');
     } catch (e) {}
   }
   loadSidebarNews();
