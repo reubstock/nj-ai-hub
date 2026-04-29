@@ -180,7 +180,7 @@
       <!-- Local Legacy -->
       <div class="sidebar-section-title" style="text-decoration: underline; color:#ef4444;">LOCAL LEGACY</div>
       <div style="margin-bottom: 0.85rem;">
-        <div class="sidebar-item">
+        <div class="sidebar-item" onclick="location.href='/legacy.html'" style="cursor:pointer;" title="View Legacy page">
           <div class="dot-mini" style="background:#ef4444;box-shadow:0 0 4px rgba(239,68,68,0.9);"></div>
           <div class="body">
             <div class="title">Sarnoff · Bell Labs · RCA</div>
@@ -230,7 +230,7 @@
       <!-- Training -->
       <div class="sidebar-section-title" style="text-decoration: underline;">TRAINING</div>
       <div style="margin-bottom: 0.85rem;">
-        <div class="sidebar-item">
+        <div class="sidebar-item" onclick="location.href='/team.html'" style="cursor:pointer;" title="View Team page">
           <div class="dot-mini" style="background:#16a34a;box-shadow:0 0 4px rgba(22,163,74,0.9);"></div>
           <div class="body">
             <div class="title">Microsoft TechSpark</div>
@@ -567,8 +567,8 @@
       // Update sidebar + counts
       populateSidebar(partners, events);
 
-      // Show launch notecards pinned to their map dots (no separate popup needed)
-      showLaunchCards(legacyAll.slice(0, 2).filter(l => l.lat && l.lng));
+      // Show launch notecards: Hub, Bell Labs (oldest legacy), TechSpark (training)
+      showLaunchCards(legacyAll.slice(0, 1).filter(l => l.lat && l.lng));
     } catch (e) {
       console.error('Map data load failed:', e);
     }
@@ -631,6 +631,10 @@
         href: `/legacy-detail.html?id=${l.id}`, photo: l.photo || null,
         lat: l.lat, lng: l.lng,
       })),
+      { id: 'lcard-techspark', label: 'TRAINING', color: '#16a34a',
+        title: 'Microsoft TechSpark', meta: 'NJ AI Hub, West Windsor',
+        href: '/team.html', photo: null,
+        lat: HUB_LATLNG[0], lng: HUB_LATLNG[1] },
     ];
 
     container.innerHTML = cards.map(c => `
