@@ -438,10 +438,41 @@ nav {
 .team-bio {
   color: var(--muted);
   font-size: 0.9rem;
-  margin: 0;
+  margin: 0 0 0.6rem;
   text-align: left;
   line-height: 1.65;
 }
+.team-bio-wrap {
+  position: relative;
+}
+.team-bio-wrap.collapsed {
+  max-height: 82px;
+  overflow: hidden;
+}
+.team-bio-wrap.collapsed::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 44px;
+  background: linear-gradient(to bottom, transparent, #fff);
+  pointer-events: none;
+}
+.team-bio-btn {
+  display: inline-block;
+  margin-top: 0.6rem;
+  background: none;
+  border: none;
+  color: var(--orange);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  padding: 0;
+  font-family: inherit;
+  transition: opacity 0.15s;
+}
+.team-bio-btn:hover { opacity: 0.7; }
 
 /* ── Metrics / stats ──────────────────────────────────────────── */
 .stats-grid {

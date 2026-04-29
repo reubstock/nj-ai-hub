@@ -61,6 +61,12 @@
     return name.split(' ').map(p => p[0]).slice(0, 2).join('').toUpperCase();
   }
 
+  function toggleBio(btn) {
+    const wrap = btn.previousElementSibling;
+    const collapsed = wrap.classList.toggle('collapsed');
+    btn.textContent = collapsed ? 'Expand ↓' : 'Collapse ↑';
+  }
+
   async function loadTeam() {
     const el = document.getElementById('team-list');
     try {
@@ -68,7 +74,7 @@
       const items = await res.json();
       if (!items.length) { el.innerHTML = '<div class="empty-state">Team coming soon.</div>'; return; }
       el.innerHTML = items.map(m => {
-        const bioParas = (m.bio || '').split('\n\n').filter(p => p.trim())
+        const bioHtml = (m.bio || '').split('\n\n').filter(p => p.trim())
           .map(p => `<p class="team-bio">${p.trim()}</p>`).join('');
         return `
         <article class="team-card">
@@ -80,7 +86,8 @@
           </div>
           <h3 class="team-name">${m.name}</h3>
           <p class="team-role">${m.role}</p>
-          ${bioParas}
+          <div class="team-bio-wrap collapsed">${bioHtml}</div>
+          <button class="team-bio-btn" onclick="toggleBio(this)">Expand ↓</button>
         </article>`;
       }).join('');
     } catch (e) { console.error(e); el.innerHTML = '<div class="empty-state">Failed to load team.</div>'; }
