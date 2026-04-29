@@ -206,6 +206,15 @@ const legacy = [
   },
   {
     id: nextId('legacy'),
+    title: 'John von Neumann — IAS Princeton',
+    description: `Working at the Institute for Advanced Study in Princeton, von Neumann pioneered the stored-program computer architecture that underlies every machine built since. His contributions to logic, game theory, and self-replicating automata laid theoretical foundations that AI researchers still build on today.`,
+    link: 'https://en.wikipedia.org/wiki/John_von_Neumann',
+    location: 'Princeton, NJ',
+    date: '1933-01-01',
+    photo: 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=900&q=80&auto=format&fit=crop',
+  },
+  {
+    id: nextId('legacy'),
     title: 'RCA Laboratories',
     description: 'RCA\'s Princeton research arm developed the color TV picture tube, liquid crystal displays, and early satellite communication systems, driving consumer electronics forward for decades.',
     link: 'https://en.wikipedia.org/wiki/RCA_Laboratories',
