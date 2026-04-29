@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 96">
+  <!-- Outer shield border (filled, then inner cutout for border effect) -->
+  <path d="M4,4 L76,4 L76,54 Q74,78 40,93 Q6,78 4,54 Z"
+        fill="#E77500" />
+  <path d="M9,9 L71,9 L71,53 Q69,73 40,86 Q11,73 9,53 Z"
+        fill="none" stroke="#E77500" stroke-width="0"/>
+  <!-- Inner shield background (transparent so nav bg shows) -->
+  <path d="M9,9 L71,9 L71,53 Q69,73 40,86 Q11,73 9,53 Z"
+        fill="rgba(0,0,0,0)" />
+
+  <!-- Open book (upper interior) -->
+  <!-- Left page -->
+  <rect x="17" y="17" width="21" height="26" rx="1" fill="none" stroke="rgba(0,0,0,0.85)" stroke-width="2.2"/>
+  <!-- Right page -->
+  <rect x="38" y="17" width="21" height="26" rx="1" fill="none" stroke="rgba(0,0,0,0.85)" stroke-width="2.2"/>
+  <!-- Spine -->
+  <line x1="38" y1="17" x2="38" y2="43" stroke="rgba(0,0,0,0.85)" stroke-width="2.2"/>
+  <!-- Page lines left -->
+  <line x1="21" y1="24" x2="35" y2="24" stroke="rgba(0,0,0,0.7)" stroke-width="1.2"/>
+  <line x1="21" y1="29" x2="35" y2="29" stroke="rgba(0,0,0,0.7)" stroke-width="1.2"/>
+  <line x1="21" y1="34" x2="35" y2="34" stroke="rgba(0,0,0,0.7)" stroke-width="1.2"/>
+  <!-- Page lines right -->
+  <line x1="41" y1="24" x2="55" y2="24" stroke="rgba(0,0,0,0.7)" stroke-width="1.2"/>
+  <line x1="41" y1="29" x2="55" y2="29" stroke="rgba(0,0,0,0.7)" stroke-width="1.2"/>
+  <line x1="41" y1="34" x2="55" y2="34" stroke="rgba(0,0,0,0.7)" stroke-width="1.2"/>
+
+  <!-- Chevron (lower interior) -->
+  <polyline points="11,54 40,76 69,54"
+            fill="none" stroke="rgba(0,0,0,0.85)" stroke-width="8.5"
+            stroke-linejoin="round" stroke-linecap="round"/>
+</svg>
