@@ -10,6 +10,7 @@ app.use('/api/events', require('./routes/events'));
 app.use('/api/team', require('./routes/team'));
 app.use('/api/partners', require('./routes/partners'));
 app.use('/api/contact', require('./routes/contact'));
+app.use('/api/legacy', require('./routes/legacy'));
 
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));

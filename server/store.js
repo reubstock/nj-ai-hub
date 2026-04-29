@@ -1,7 +1,7 @@
 // In-memory data store for NJ AI Hub.
 // Seed data lives in JS arrays — survives restarts in dev, resets on Vercel cold starts.
 
-let _id = { news: 0, events: 0, team: 0, partners: 0, contacts: 0 };
+let _id = { news: 0, events: 0, team: 0, partners: 0, contacts: 0, legacy: 0 };
 const nextId = (k) => ++_id[k];
 
 // Unsplash photos (free to hotlink, themed to each story)
@@ -185,6 +185,36 @@ const partners = [
   { id: nextId('partners'), name: 'NJIT',                 role: 'Higher-ed partner — Newark',           logo: '/images/partner-njit.png',      url: 'https://www.njit.edu',       lat: 40.7421, lng: -74.1782 },
 ];
 
+const legacy = [
+  {
+    id: nextId('legacy'),
+    title: 'Sarnoff Laboratories',
+    description: 'RCA\'s David Sarnoff Research Center in Princeton pioneered transistor technology, color television broadcasting, and early computing — foundational breakthroughs that shaped the modern electronics industry.',
+    link: 'https://en.wikipedia.org/wiki/SRI_International_(Sarnoff)',
+    location: 'Princeton, NJ',
+    date: '1942-01-01',
+    photo: 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=900&q=80&auto=format&fit=crop',
+  },
+  {
+    id: nextId('legacy'),
+    title: 'Bell Labs',
+    description: 'Bell Laboratories in Murray Hill and Holmdel invented the transistor, laser, Unix, C, and cellular networks — earning more Nobel Prizes than most nations and defining the template for industrial research.',
+    link: 'https://en.wikipedia.org/wiki/Bell_Labs',
+    location: 'Murray Hill / Holmdel, NJ',
+    date: '1925-01-01',
+    photo: 'https://images.unsplash.com/photo-1535557597501-0fee0a500c57?w=900&q=80&auto=format&fit=crop',
+  },
+  {
+    id: nextId('legacy'),
+    title: 'RCA Laboratories',
+    description: 'RCA\'s Princeton research arm developed the color TV picture tube, liquid crystal displays, and early satellite communication systems, driving consumer electronics forward for decades.',
+    link: 'https://en.wikipedia.org/wiki/RCA_Laboratories',
+    location: 'Princeton, NJ',
+    date: '1935-01-01',
+    photo: 'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=900&q=80&auto=format&fit=crop',
+  },
+];
+
 const contacts = [];
 
 const today = () => new Date().toISOString().split('T')[0];
@@ -217,6 +247,15 @@ module.exports = {
   },
   partners: {
     all: () => partners,
+  },
+  legacy: {
+    all: () => sortByDateAsc(legacy),
+    get: (id) => legacy.find((l) => l.id === Number(id)) || null,
+    insert: (data) => {
+      const item = { id: nextId('legacy'), date: today(), ...data };
+      legacy.push(item);
+      return item;
+    },
   },
   contacts: {
     all: () => contacts,
