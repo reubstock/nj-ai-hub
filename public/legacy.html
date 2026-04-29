@@ -47,7 +47,7 @@
 <div id="legacy-modal" class="modal-overlay" style="display:none;" onclick="closeOnOverlay(event)">
   <div class="modal-box">
     <div class="modal-header">
-      <h2 class="modal-title">Add Legacy Entry</h2>
+      <h2 class="modal-title" id="modal-title">Add Legacy Entry</h2>
       <button class="modal-close" onclick="closeModal()" aria-label="Close">&times;</button>
     </div>
 
@@ -151,7 +151,10 @@
             ${item.date ? `<div class="card-meta">${fmtDate(item.date)}${item.location ? ' · ' + item.location : ''}</div>` : (item.location ? `<div class="card-meta">${item.location}</div>` : '')}
             <h3 class="card-title">${item.title}</h3>
             ${item.description ? `<p class="card-summary">${item.description}</p>` : ''}
-            ${item.link ? `<a class="card-link" href="${item.link}" target="_blank" rel="noopener">Learn more</a>` : ''}
+            <div class="card-actions">
+              ${item.link ? `<a class="card-link" href="${item.link}" target="_blank" rel="noopener">Learn more</a>` : ''}
+              <button class="card-edit-btn" onclick='openEditModal(${JSON.stringify(item)})'>Edit</button>
+            </div>
           </div>
         </article>
       `).join('');
@@ -161,14 +164,10 @@
     }
   }
 
-  /* ── Modal ── */
-  function openModal() {
-    document.getElementById('legacy-modal').style.display = 'flex';
-    document.body.style.overflow = 'hidden';
-    document.getElementById('f-title').focus();
-  }
-
-  let _photoData = null; // holds base64 data URI of selected image
+  /* ── Modal state ── */
+  let _photoData = null;   // base64 of newly selected image (null = no new image)
+  let _existingPhoto = ''; // photo stored on the entry being edited
+  let _editingId = null;   // null = add mode, number = edit mode
 
   function handlePhotoSelect(input) {
     const file = input.files[0];
@@ -177,11 +176,52 @@
     const reader = new FileReader();
     reader.onload = (e) => {
       _photoData = e.target.result;
-      const preview = document.getElementById('photo-preview');
       document.getElementById('photo-preview-img').src = _photoData;
-      preview.style.display = 'block';
+      document.getElementById('photo-preview').style.display = 'block';
     };
     reader.readAsDataURL(file);
+  }
+
+  function openModal() {
+    // Add mode
+    _editingId = null;
+    _existingPhoto = '';
+    document.getElementById('modal-title').textContent = 'Add Legacy Entry';
+    document.getElementById('submit-btn').textContent = 'Add Entry';
+    document.getElementById('legacy-modal').style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+    document.getElementById('f-title').focus();
+  }
+
+  function openEditModal(item) {
+    _editingId = item.id;
+    _existingPhoto = item.photo || '';
+    _photoData = null;
+
+    document.getElementById('modal-title').textContent = 'Edit Legacy Entry';
+    document.getElementById('submit-btn').textContent = 'Save Changes';
+
+    // Pre-fill fields
+    document.getElementById('f-title').value       = item.title || '';
+    document.getElementById('f-description').value = item.description || '';
+    document.getElementById('f-date').value         = item.date || '';
+    document.getElementById('f-location').value     = item.location || '';
+    document.getElementById('f-link').value         = item.link || '';
+
+    // Show existing photo in preview if present
+    if (_existingPhoto) {
+      document.getElementById('file-pick-label').textContent = 'Replace image…';
+      document.getElementById('photo-preview-img').src = _existingPhoto;
+      document.getElementById('photo-preview').style.display = 'block';
+    } else {
+      document.getElementById('file-pick-label').textContent = 'Choose image…';
+      document.getElementById('photo-preview').style.display = 'none';
+    }
+
+    document.getElementById('form-error').style.display = 'none';
+    document.getElementById('legacy-modal').style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+    document.getElementById('f-title').focus();
   }
 
   function closeModal() {
@@ -190,6 +230,8 @@
     document.getElementById('legacy-form').reset();
     document.getElementById('form-error').style.display = 'none';
     _photoData = null;
+    _existingPhoto = '';
+    _editingId = null;
     document.getElementById('file-pick-label').textContent = 'Choose image…';
     document.getElementById('photo-preview').style.display = 'none';
     document.getElementById('photo-preview-img').src = '';
@@ -213,15 +255,17 @@
       date:        document.getElementById('f-date').value,
       location:    document.getElementById('f-location').value.trim(),
       link:        document.getElementById('f-link').value.trim(),
-      photo:       _photoData || '',
+      // Use new image if picked, otherwise keep existing (or empty for new entries)
+      photo:       _photoData || _existingPhoto,
     };
 
+    const isEdit = _editingId !== null;
     btn.disabled = true;
     btn.textContent = 'Saving…';
 
     try {
-      const res = await fetch('/api/legacy', {
-        method: 'POST',
+      const res = await fetch(isEdit ? `/api/legacy/${_editingId}` : '/api/legacy', {
+        method: isEdit ? 'PUT' : 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
@@ -233,7 +277,7 @@
       errEl.style.display = 'block';
     } finally {
       btn.disabled = false;
-      btn.textContent = 'Add Entry';
+      btn.textContent = isEdit ? 'Save Changes' : 'Add Entry';
     }
   }
 

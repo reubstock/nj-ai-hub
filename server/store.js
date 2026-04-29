@@ -256,6 +256,12 @@ module.exports = {
       legacy.push(item);
       return item;
     },
+    update: (id, data) => {
+      const idx = legacy.findIndex((l) => l.id === Number(id));
+      if (idx === -1) return null;
+      legacy[idx] = { ...legacy[idx], ...data, id: legacy[idx].id };
+      return legacy[idx];
+    },
   },
   contacts: {
     all: () => contacts,
