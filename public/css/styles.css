@@ -674,7 +674,7 @@ nav {
 /* Hero sidebar */
 #map-sidebar {
   position: absolute;
-  left: 0; top: 0; bottom: 0;
+  right: 0; top: 0; bottom: 0;
   width: 280px;
   z-index: 100;
   display: flex;
@@ -761,10 +761,10 @@ nav {
   flex: 1;
 }
 
-/* Right-side panel — sits beneath zoom controls */
+/* Left-side panel — sits beneath zoom controls */
 #map-sidebar-right {
   position: absolute;
-  right: 0; top: 90px; bottom: 1rem;
+  left: 0; top: 90px; bottom: 1rem;
   width: 280px;
   z-index: 100;
   display: flex;

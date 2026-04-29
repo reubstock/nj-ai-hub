@@ -549,14 +549,24 @@
       const res = await fetch('/api/news');
       const items = await res.json();
       if (!items.length) return;
-      const two = items.slice(0, 2);
-      document.getElementById('sidebar-news-list').innerHTML = two.map((n, i) => `
-        ${i > 0 ? '<div style="border-top:1px solid rgba(255,255,255,0.07);margin:0.45rem 0;"></div>' : ''}
-        <a class="sidebar-news-card" href="/news.html#n${n.id}" style="text-decoration:none;display:block;">
-          <h4 class="news-title">${n.title}</h4>
-          <div class="news-date">${fmtDate(n.date)}</div>
-        </a>
-      `).join('');
+      const CAT_COLOR = {
+        'R&D':      '#4a90d9',
+        'STARTUPS': '#f57c00',
+        'TRAINING': '#16a34a',
+        'POLICY':   '#a855f7',
+        'GRAVITY':  '#f5c518',
+      };
+      const four = items.slice(0, 4);
+      document.getElementById('sidebar-news-list').innerHTML = four.map((n, i) => {
+        const color = CAT_COLOR[n.category] || 'rgba(255,255,255,0.3)';
+        return `
+          ${i > 0 ? '<div style="border-top:1px solid rgba(255,255,255,0.07);margin:0.45rem 0;"></div>' : ''}
+          <a class="sidebar-news-card" href="/news.html#n${n.id}"
+             style="text-decoration:none;display:block;padding-left:0.55rem;border-left:2.5px solid ${color};">
+            <h4 class="news-title">${n.title}</h4>
+            <div class="news-date" style="color:${color};">${n.category ? n.category + ' · ' : ''}${fmtDate(n.date)}</div>
+          </a>`;
+      }).join('');
     } catch (e) {}
   }
   loadSidebarNews();
