@@ -82,8 +82,17 @@
         </div>
 
         <div class="field-group">
-          <label class="field-label">Photo URL</label>
-          <input type="url" id="f-photo" class="field-input" placeholder="https://… (image URL)" />
+          <label class="field-label">Photo</label>
+          <label class="file-pick-btn" for="f-photo-file">
+            <span id="file-pick-label">Choose image…</span>
+            <input type="file" id="f-photo-file" accept="image/*"
+                   style="position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;"
+                   onchange="handlePhotoSelect(this)" />
+          </label>
+          <div id="photo-preview" style="display:none;margin-top:0.6rem;border-radius:8px;overflow:hidden;max-height:160px;">
+            <img id="photo-preview-img" src="" alt="Preview"
+                 style="width:100%;height:160px;object-fit:cover;display:block;" />
+          </div>
         </div>
 
       </div>
@@ -159,11 +168,31 @@
     document.getElementById('f-title').focus();
   }
 
+  let _photoData = null; // holds base64 data URI of selected image
+
+  function handlePhotoSelect(input) {
+    const file = input.files[0];
+    if (!file) return;
+    document.getElementById('file-pick-label').textContent = file.name;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      _photoData = e.target.result;
+      const preview = document.getElementById('photo-preview');
+      document.getElementById('photo-preview-img').src = _photoData;
+      preview.style.display = 'block';
+    };
+    reader.readAsDataURL(file);
+  }
+
   function closeModal() {
     document.getElementById('legacy-modal').style.display = 'none';
     document.body.style.overflow = '';
     document.getElementById('legacy-form').reset();
     document.getElementById('form-error').style.display = 'none';
+    _photoData = null;
+    document.getElementById('file-pick-label').textContent = 'Choose image…';
+    document.getElementById('photo-preview').style.display = 'none';
+    document.getElementById('photo-preview-img').src = '';
   }
 
   function closeOnOverlay(e) {
@@ -184,7 +213,7 @@
       date:        document.getElementById('f-date').value,
       location:    document.getElementById('f-location').value.trim(),
       link:        document.getElementById('f-link').value.trim(),
-      photo:       document.getElementById('f-photo').value.trim(),
+      photo:       _photoData || '',
     };
 
     btn.disabled = true;

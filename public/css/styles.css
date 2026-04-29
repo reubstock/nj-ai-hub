@@ -1123,3 +1123,30 @@ textarea.field-input { resize: vertical; min-height: 90px; }
   font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: color 0.15s;
 }
 .btn-secondary:hover { color: #fff; border-color: rgba(255,255,255,0.35); }
+
+/* ── File picker button ── */
+.file-pick-btn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(255,255,255,0.06);
+  border: 1px dashed rgba(255,255,255,0.25);
+  border-radius: 8px;
+  padding: 0.65rem 0.9rem;
+  color: rgba(255,255,255,0.65);
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+  overflow: hidden;
+}
+.file-pick-btn:hover {
+  border-color: #ef4444;
+  background: rgba(239,68,68,0.06);
+  color: #fff;
+}
+.file-pick-btn::before {
+  content: '📎';
+  font-size: 1rem;
+  flex-shrink: 0;
+}
