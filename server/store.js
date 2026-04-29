@@ -193,7 +193,7 @@ const legacy = [
     link: 'https://en.wikipedia.org/wiki/SRI_International_(Sarnoff)',
     location: 'West Windsor, NJ',
     date: '1942-01-01',
-    photo: 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=900&q=80&auto=format&fit=crop',
+    photo: '/images/legacy-sarnoff.png',
     lat: 40.3182, lng: -74.6321,
   },
   {
@@ -203,7 +203,7 @@ const legacy = [
     link: 'https://en.wikipedia.org/wiki/Bell_Labs',
     location: 'Murray Hill, NJ',
     date: '1925-01-01',
-    photo: 'https://images.unsplash.com/photo-1535557597501-0fee0a500c57?w=900&q=80&auto=format&fit=crop',
+    photo: '/images/legacy-belllabs.png',
     lat: 40.6814, lng: -74.3992,
   },
   {
@@ -213,7 +213,7 @@ const legacy = [
     link: 'https://en.wikipedia.org/wiki/John_von_Neumann',
     location: 'Princeton, NJ',
     date: '1933-01-01',
-    photo: 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=900&q=80&auto=format&fit=crop',
+    photo: '/images/legacy-vonneumann.png',
     lat: 40.3458, lng: -74.6705,
   },
   {
@@ -223,7 +223,7 @@ const legacy = [
     link: 'https://en.wikipedia.org/wiki/RCA_Laboratories',
     location: 'Princeton, NJ',
     date: '1935-01-01',
-    photo: 'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=900&q=80&auto=format&fit=crop',
+    photo: '/images/legacy-rca.png',
   },
 ];
 
