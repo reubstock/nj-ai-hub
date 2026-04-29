@@ -634,33 +634,45 @@ nav {
 }
 
 /* ── Homepage launch notecards ───────────────────────────────── */
+/* ── Launch notecards: full-overlay container, cards individually positioned ── */
 .launch-cards {
   position: absolute;
-  bottom: 1.6rem;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  gap: 1rem;
+  inset: 0;
   z-index: 110;
   pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.55s ease;
 }
-.launch-cards.visible { opacity: 1; pointer-events: auto; }
+.launch-cards.visible { pointer-events: auto; }
+
 .launch-card {
+  position: absolute;
+  width: 190px;
   background: rgba(11, 20, 38, 0.91);
   border: 1px solid rgba(255,255,255,0.14);
   border-radius: 10px;
-  width: 190px;
-  overflow: hidden;
-  position: relative;
+  overflow: visible;           /* allow ::after stem to show below card */
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  transition: opacity 0.35s ease, transform 0.35s ease;
   box-shadow: 0 8px 28px rgba(0,0,0,0.45);
+  opacity: 0;
+  transition: opacity 0.5s ease, transform 0.35s ease;
+  pointer-events: none;
 }
-.launch-card.dismissed { opacity: 0; transform: translateY(8px); pointer-events: none; }
-.lcard-photo { height: 76px; overflow: hidden; }
+.launch-cards.visible .launch-card { opacity: 1; pointer-events: auto; }
+.launch-card.dismissed { opacity: 0 !important; transform: translateY(8px); pointer-events: none !important; }
+
+/* Connector stem pointing from card bottom toward the marker dot */
+.launch-card::after {
+  content: '';
+  position: absolute;
+  bottom: -14px;
+  left: calc(50% + var(--stem-offset, 0px));
+  transform: translateX(-50%);
+  width: 1px;
+  height: 14px;
+  background: rgba(255,255,255,0.35);
+}
+
+.lcard-photo { height: 76px; overflow: hidden; border-radius: 10px 10px 0 0; }
 .lcard-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .lcard-body { padding: 0.7rem 0.75rem 0.8rem; }
 .lcard-close {
@@ -710,10 +722,6 @@ nav {
   transition: background 0.2s;
 }
 .lcard-link:hover { opacity: 0.85; text-decoration: none; }
-@media (max-width: 700px) {
-  .launch-cards { flex-direction: column; bottom: 0.75rem; max-height: 55vh; overflow-y: auto; }
-  .launch-card { width: 170px; }
-}
 
 @keyframes pulse-ring {
   0%   { transform: scale(1);   opacity: 0.85; }

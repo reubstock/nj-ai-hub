@@ -567,11 +567,8 @@
       // Update sidebar + counts
       populateSidebar(partners, events);
 
-      // Auto-open Hub map popup
-      setTimeout(() => openManagedPopup(hubKey), 700);
-
-      // Show launch notecards: Hub + 2 oldest legacy items
-      showLaunchCards(legacyAll.slice(0, 2));
+      // Show launch notecards pinned to their map dots (no separate popup needed)
+      showLaunchCards(legacyAll.slice(0, 2).filter(l => l.lat && l.lng));
     } catch (e) {
       console.error('Map data load failed:', e);
     }
@@ -624,23 +621,15 @@
     if (!container) return;
 
     const cards = [
-      {
-        id:    'lcard-hub',
-        label: 'THE HUB',
-        color: '#f57c00',
-        title: 'NJ AI Hub',
-        meta:  'Alexander Road, West Windsor',
-        href:  '/location.html',
-        photo: null,
-      },
+      { id: 'lcard-hub', label: 'THE HUB', color: '#f57c00',
+        title: 'NJ AI Hub', meta: 'Alexander Road, West Windsor',
+        href: '/location.html', photo: null,
+        lat: HUB_LATLNG[0], lng: HUB_LATLNG[1] },
       ...legacyItems.map(l => ({
-        id:    `lcard-l${l.id}`,
-        label: 'LEGACY',
-        color: '#ef4444',
-        title: l.title,
-        meta:  l.location || '',
-        href:  `/legacy-detail.html?id=${l.id}`,
-        photo: l.photo || null,
+        id: `lcard-l${l.id}`, label: 'LEGACY', color: '#ef4444',
+        title: l.title, meta: l.location || '',
+        href: `/legacy-detail.html?id=${l.id}`, photo: l.photo || null,
+        lat: l.lat, lng: l.lng,
       })),
     ];
 
@@ -657,11 +646,82 @@
       </div>
     `).join('');
 
-    // Fade in
     requestAnimationFrame(() => {
+      const mapEl  = document.getElementById('hero-map');
+      const mapW   = mapEl.offsetWidth;
+      const mapH   = mapEl.offsetHeight;
+      const CARD_W = 190;
+      const GAP    = 18;
+      const PAD    = 12;
+
+      if (mapW < 640) {
+        // ── Mobile fallback: evenly-spaced strip at bottom of map ──
+        const total    = cards.length;
+        const gap      = 8;
+        const stripW   = Math.min(mapW - PAD * 2, total * CARD_W + (total - 1) * gap);
+        const startX   = (mapW - stripW) / 2;
+        cards.forEach((c, i) => {
+          const card = document.getElementById(c.id);
+          if (!card) return;
+          card.style.left = (startX + i * (CARD_W + gap)) + 'px';
+          card.style.top  = (mapH - card.offsetHeight - 60) + 'px';
+          card.style.setProperty('--stem-offset', '0px');
+        });
+      } else {
+        // ── Desktop: pin cards above their dot, resolve overlaps ──
+        const slots = cards.map(c => {
+          const pt    = heroMap.latLngToContainerPoint(L.latLng(c.lat, c.lng));
+          const card  = document.getElementById(c.id);
+          const cardH = card ? card.offsetHeight : 160;
+          return { id: c.id, dotX: pt.x, dotY: pt.y, cardH,
+                   finalX: pt.x - CARD_W / 2 };
+        });
+
+        // Fan out clusters (dots within 40 px of each other)
+        for (let i = 0; i < slots.length; i++) {
+          for (let j = i + 1; j < slots.length; j++) {
+            const dx = Math.abs(slots[i].dotX - slots[j].dotX);
+            const dy = Math.abs(slots[i].dotY - slots[j].dotY);
+            if (Math.hypot(dx, dy) < 40) {
+              // Push i left, j right of shared dot
+              const mid  = (slots[i].dotX + slots[j].dotX) / 2;
+              slots[i].finalX = mid - CARD_W - 6;
+              slots[j].finalX = mid + 6;
+            }
+          }
+        }
+
+        // Left-to-right pass: ensure no two cards overlap
+        slots.sort((a, b) => a.finalX - b.finalX);
+        for (let i = 1; i < slots.length; i++) {
+          const needed = slots[i - 1].finalX + CARD_W + 8;
+          if (slots[i].finalX < needed) slots[i].finalX = needed;
+        }
+
+        // Right-to-left pass: pull back if pushed off right edge
+        for (let i = slots.length - 1; i >= 0; i--) {
+          const maxX = mapW - CARD_W - PAD;
+          if (slots[i].finalX > maxX) slots[i].finalX = maxX;
+          if (i > 0) {
+            const minPrev = slots[i].finalX - CARD_W - 8;
+            if (slots[i - 1].finalX > minPrev) slots[i - 1].finalX = minPrev;
+          }
+        }
+
+        slots.forEach(s => {
+          const card = document.getElementById(s.id);
+          if (!card) return;
+          const x = Math.max(PAD, s.finalX);
+          const y = Math.max(PAD, s.dotY - s.cardH - GAP);
+          card.style.left = x + 'px';
+          card.style.top  = y + 'px';
+          card.style.setProperty('--stem-offset',
+            (s.dotX - (x + CARD_W / 2)).toFixed(1) + 'px');
+        });
+      }
+
       requestAnimationFrame(() => container.classList.add('visible'));
     });
-
   }
 
   plotMap();
