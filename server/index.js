@@ -3,7 +3,8 @@ const path = require('path');
 
 const app = express();
 app.use(express.json({ limit: '10mb' }));
-app.use(express.static(path.join(__dirname, '..', 'public')));
+app.use(express.static(path.join(__dirname, '..', 'public'), { etag: false, maxAge: 0 }));
+app.use((req, res, next) => { res.set('Cache-Control', 'no-store'); next(); });
 
 app.use('/api/news',    require('./routes/news'));
 app.use('/api/events',  require('./routes/events'));

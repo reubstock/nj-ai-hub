@@ -367,6 +367,10 @@
     cancelZoomBack();
     window._zoomBackTimer = setTimeout(() => {
       heroMap.flyTo(NJ_DEFAULT_VIEW, NJ_DEFAULT_ZOOM, { duration: 2.0 });
+      // Restore any bg-dismissed cards (pointer lines ride with them automatically)
+      document.querySelectorAll('.launch-card.bg-dismissed').forEach(card => {
+        card.classList.remove('bg-dismissed');
+      });
       window._zoomBackTimer = null;
     }, 8000);
   }
@@ -385,11 +389,17 @@
     cancelZoomBack();
     const m = window._markerRefs[key];
     if (!m) return;
-    heroMap.flyTo(m.getLatLng(), 9, { duration: 1.6 });
-    setTimeout(() => openManagedPopup(key), 500);
+    if (heroMap.getZoom() > 10) {
+      // Already zoomed in — just open popup, no re-fly
+      openManagedPopup(key);
+    } else {
+      heroMap.flyTo(m.getLatLng(), 9, { duration: 1.6 });
+      setTimeout(() => openManagedPopup(key), 500);
+    }
     scheduleZoomBack();
   };
   heroMap.on('dragstart', cancelZoomBack);
+  heroMap.on('move', updatePointers);
 
   function makeIcon(klass) {
     return L.divIcon({
@@ -551,8 +561,56 @@
     const card = document.getElementById(id);
     if (!card) return;
     card.classList.add('dismissed');
-    setTimeout(() => card.remove(), 380);
+    const g = document.getElementById(`ptr-${id}`);
+    if (g) { g.style.opacity = '0'; }
+    setTimeout(() => {
+      card.remove();
+      if (g) g.remove();
+      if (window._pointerSlots) window._pointerSlots = window._pointerSlots.filter(s => s.id !== id);
+    }, 380);
   }
+
+  // ── Card drag — single capture-phase listener on document ──────────────
+  // Fires before ANY other handler (Leaflet, etc.) in the capture phase.
+  // No per-card attribute wiring needed — works as long as JS runs at all.
+  document.addEventListener('pointerdown', function(e) {
+    if (e.button !== 0 && e.button !== undefined) return;
+    const card = e.target.closest && e.target.closest('.launch-card');
+    if (!card) return;
+    if (e.target.closest('.lcard-close, a')) return;
+
+    e.preventDefault();   // stop map pan / text selection
+    e.stopPropagation();  // don't let Leaflet see this down-event
+
+    const startX = e.clientX;
+    const startY = e.clientY;
+    const startL = parseFloat(card.style.left) || 0;
+    const startT = parseFloat(card.style.top)  || 0;
+    let moved    = false;
+    card.classList.add('dragging');
+
+    function onMove(ev) {
+      const dx = ev.clientX - startX;
+      const dy = ev.clientY - startY;
+      if (!moved && Math.hypot(dx, dy) < 4) return;
+      moved = true;
+      card.style.left = (startL + dx) + 'px';
+      card.style.top  = (startT + dy) + 'px';
+      updatePointers();
+    }
+    function onUp() {
+      document.removeEventListener('pointermove', onMove, { capture: true });
+      document.removeEventListener('pointerup',   onUp,   { capture: true });
+      card.classList.remove('dragging');
+      if (!moved) {
+        const lat = parseFloat(card.dataset.lat);
+        const lng = parseFloat(card.dataset.lng);
+        zoomToCard(lat, lng, card.id);
+      }
+    }
+    document.addEventListener('pointermove', onMove, { capture: true });
+    document.addEventListener('pointerup',   onUp,   { capture: true });
+  }, { capture: true });
 
   // Zoom map to a notecard's location, then return after 8 s.
   // If already zoomed in (different card), fly out to NJ overview first, then fly in.
@@ -560,19 +618,27 @@
 
   function zoomToCard(lat, lng, cardId) {
     cancelZoomBack();
-    // Cancel any pending two-step fly-in
     if (window._cardFlyTimer) { clearTimeout(window._cardFlyTimer); window._cardFlyTimer = null; }
 
+    // Dismiss all other cards — pointer lines are inside each card, so they follow automatically
+    document.querySelectorAll('.launch-card').forEach(card => {
+      if (card.id === cardId) {
+        card.classList.remove('bg-dismissed');
+      } else {
+        card.classList.add('bg-dismissed');
+      }
+    });
+
+    // Spring-bounce the active card
     const card = document.getElementById(cardId);
     if (card) {
       card.classList.add('zooming');
-      setTimeout(() => card.classList.remove('zooming'), 450);
+      setTimeout(() => card.classList.remove('zooming'), 500);
     }
 
     const flyIn = () => heroMap.flyTo([lat, lng], 12, { duration: 1.5 });
 
     if (heroMap.getZoom() > NJ_DEFAULT_ZOOM + 0.5) {
-      // Already zoomed in on another location — fly out to full NJ view first
       heroMap.flyTo(NJ_DEFAULT_VIEW, NJ_DEFAULT_ZOOM, { duration: 1.2 });
       window._cardFlyTimer = setTimeout(() => {
         window._cardFlyTimer = null;
@@ -585,10 +651,12 @@
     scheduleZoomBack();
   }
 
-  // Draw SVG triangular pointers (tip at dot → base at card corner nearest the dot)
+  // Single shared SVG overlay — must live in #launch-cards, NOT inside
+  // individual cards. Both backdrop-filter on .launch-card and overflow:hidden
+  // on .map-hero clip child overflow, making per-card SVGs invisible outside
+  // their parent box. The overlay SVG is appended last so it renders above cards.
+  // Visibility is synced to card state in updatePointers().
   function drawPointers(slots) {
-    const CARD_W = 190;
-    const BASE   = 14;   // triangle base width in px
     const container = document.getElementById('launch-cards');
     const NS = 'http://www.w3.org/2000/svg';
     const old = document.getElementById('lcard-pointers');
@@ -597,39 +665,106 @@
     const svg = document.createElementNS(NS, 'svg');
     svg.id = 'lcard-pointers';
     svg.setAttribute('aria-hidden', 'true');
-    svg.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible;';
-    container.insertBefore(svg, container.firstChild);
+    svg.style.cssText =
+      'position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible;z-index:200;';
+
+    window._pointerSlots = slots.map(s => ({ id: s.id, lat: s.lat, lng: s.lng, color: s.color }));
 
     slots.forEach(s => {
+      const g = document.createElementNS(NS, 'g');
+      g.id = `ptr-${s.id}`;
+      g.style.transition = 'opacity 0.28s ease';
+
+      const ln = document.createElementNS(NS, 'line');
+      ln.id = `ptr-ln-${s.id}`;
+      ln.setAttribute('stroke',            'rgba(255,255,255,0.7)');
+      ln.setAttribute('stroke-width',      '2');
+      ln.setAttribute('stroke-linecap',    'round');
+      ln.setAttribute('stroke-dasharray',  '5,4');
+      g.appendChild(ln);
+
+      const mo = document.createElementNS(NS, 'circle');
+      mo.id = `ptr-mo-${s.id}`;
+      mo.setAttribute('r',            '5');
+      mo.setAttribute('fill',         s.color || 'rgba(255,255,255,0.9)');
+      mo.setAttribute('stroke',       'rgba(255,255,255,0.95)');
+      mo.setAttribute('stroke-width', '1.5');
+      g.appendChild(mo);
+
+      svg.appendChild(g);
+    });
+
+    // Append LAST so SVG renders above all cards
+    container.appendChild(svg);
+    updatePointers();
+  }
+
+  // Nearest point on the card's visible border to the map dot.
+  // R = border-radius; attachment is clamped R px from corners so the line
+  // emerges from the visible card face, not the rounded-corner dead zone.
+  function nearestBorderPoint(dotX, dotY, cx, cy, cw, ch, R) {
+    R = R || 0;
+    const clampX = Math.max(cx, Math.min(cx + cw, dotX));
+    const clampY = Math.max(cy, Math.min(cy + ch, dotY));
+    let bx, by;
+    if (dotX < cx)            { bx = cx;      by = clampY; }
+    else if (dotX > cx + cw)  { bx = cx + cw; by = clampY; }
+    else if (dotY < cy)       { bx = clampX;  by = cy;     }
+    else if (dotY > cy + ch)  { bx = clampX;  by = cy + ch; }
+    else {
+      const d = [dotX-cx, cx+cw-dotX, dotY-cy, cy+ch-dotY];
+      const m = Math.min(...d);
+      if (m === d[0])      { bx = cx;      by = dotY; }
+      else if (m === d[1]) { bx = cx + cw; by = dotY; }
+      else if (m === d[2]) { bx = dotX;    by = cy;   }
+      else                 { bx = dotX;    by = cy + ch; }
+    }
+    // Clamp away from rounded corners so line lands on the visible card face
+    if (by === cy || by === cy + ch)
+      bx = Math.max(cx + R, Math.min(cx + cw - R, bx));
+    if (bx === cx || bx === cx + cw)
+      by = Math.max(cy + R, Math.min(cy + ch - R, by));
+    return { x: bx, y: by };
+  }
+
+  function updatePointers() {
+    const slots = window._pointerSlots;
+    if (!slots) return;
+
+    // #hero-map and #launch-cards are both position:absolute;inset:0 inside
+    // .map-hero, so they share the same (0,0) origin.
+    // latLngToContainerPoint returns coords in #hero-map space = SVG space.
+    // card.style.left/top are CSS logical coords (unaffected by CSS transforms
+    // like the entrance animation) in the same space. Using these avoids
+    // getBoundingClientRect capturing mid-animation transform offsets.
+    slots.forEach(s => {
+      const g    = document.getElementById(`ptr-${s.id}`);
+      const ln   = document.getElementById(`ptr-ln-${s.id}`);
+      const mo   = document.getElementById(`ptr-mo-${s.id}`);
       const card = document.getElementById(s.id);
-      if (!card) return;
-      const cx = parseFloat(card.style.left);
-      const cy = parseFloat(card.style.top);
-      const cw = CARD_W, ch = s.cardH;
+      if (!g || !ln || !mo || !card) return;
 
-      // Four corners with their base-spread directions (inward along the edge)
-      const corners = [
-        { x: cx,      y: cy,      bx: cx + BASE, by: cy      }, // top-left  → spread right along top
-        { x: cx + cw, y: cy,      bx: cx+cw-BASE,by: cy      }, // top-right → spread left  along top
-        { x: cx,      y: cy + ch, bx: cx + BASE, by: cy + ch }, // bot-left  → spread right along bottom
-        { x: cx + cw, y: cy + ch, bx: cx+cw-BASE,by: cy + ch }, // bot-right → spread left  along bottom
-      ];
+      const hidden = card.classList.contains('bg-dismissed') || card.classList.contains('dismissed');
+      g.style.opacity = hidden ? '0' : '1';
+      if (hidden) return;
 
-      // Pick the corner closest to the dot
-      const closest = corners.reduce((best, c) => {
-        const d = Math.hypot(c.x - s.dotX, c.y - s.dotY);
-        return d < best.d ? { ...c, d } : best;
-      }, { ...corners[0], d: Infinity });
+      const pt   = heroMap.latLngToContainerPoint(L.latLng(s.lat, s.lng));
+      const dotX = pt.x;
+      const dotY = pt.y;
 
-      // Gray palette — visible on both light map and dark cards
-      const poly = document.createElementNS(NS, 'polygon');
-      poly.setAttribute('points',
-        `${s.dotX},${s.dotY} ${closest.x},${closest.y} ${closest.bx},${closest.by}`);
-      poly.setAttribute('fill',            'rgba(130,145,160,0.28)');
-      poly.setAttribute('stroke',          'rgba(100,115,130,0.72)');
-      poly.setAttribute('stroke-width',    '1.5');
-      poly.setAttribute('stroke-linejoin', 'round');
-      svg.appendChild(poly);
+      // Logical card bounds — style.left/top set by our layout code, offsetWidth/Height
+      // are layout-space dimensions; neither is skewed by CSS transform.
+      const cx = parseFloat(card.style.left)  || 0;
+      const cy = parseFloat(card.style.top)   || 0;
+      const cw = card.offsetWidth              || 190;
+      const ch = card.offsetHeight             || 100;
+
+      const bp = nearestBorderPoint(dotX, dotY, cx, cy, cw, ch, 10);
+
+      ln.setAttribute('x1', bp.x);  ln.setAttribute('y1', bp.y);
+      ln.setAttribute('x2', dotX);  ln.setAttribute('y2', dotY);
+      mo.setAttribute('cx', dotX);
+      mo.setAttribute('cy', dotY);
     });
   }
 
@@ -655,9 +790,7 @@
     ];
 
     container.innerHTML = cards.map(c => `
-      <div class="launch-card" id="${c.id}"
-           onclick="zoomToCard(${c.lat},${c.lng},'${c.id}')"
-           role="button" tabindex="0">
+      <div class="launch-card" id="${c.id}" data-lat="${c.lat}" data-lng="${c.lng}" role="button" tabindex="0">
         <button class="lcard-close"
                 onclick="event.stopPropagation();dismissCard('${c.id}')"
                 aria-label="Dismiss">✕</button>
@@ -677,7 +810,7 @@
       const mapW   = mapEl.offsetWidth;
       const mapH   = mapEl.offsetHeight;
       const CARD_W = 190;
-      const GAP    = 18;   // gap between card bottom and dot
+      const GAP    = 48;   // gap between card bottom and dot — needs to be visible as a tether line
       const PAD    = 12;   // edge padding
 
       if (mapW < 640) {
@@ -698,7 +831,7 @@
           const card  = document.getElementById(c.id);
           const cardH = card ? card.offsetHeight : 160;
           return {
-            id: c.id, color: c.color,
+            id: c.id, color: c.color, lat: c.lat, lng: c.lng,
             dotX: pt.x, dotY: pt.y, cardH,
             finalX: pt.x - CARD_W / 2,
             finalY: Math.max(PAD, pt.y - cardH - GAP),
@@ -756,7 +889,23 @@
         drawPointers(slots);
       }
 
-      requestAnimationFrame(() => container.classList.add('visible'));
+      // Staggered slide-up entrance, then reset delays so hover/click are snappy
+      requestAnimationFrame(() => {
+        cards.forEach((c, i) => {
+          const card = document.getElementById(c.id);
+          if (card) card.style.transitionDelay = `${i * 90}ms`;
+        });
+        container.classList.add('visible');
+        const resetMs = (cards.length - 1) * 90 + 500;
+        setTimeout(() => {
+          cards.forEach(c => {
+            const card = document.getElementById(c.id);
+            if (card) card.style.transitionDelay = '0ms';
+          });
+          // Re-run after animation completes so lines land on final card faces
+          updatePointers();
+        }, resetMs);
+      });
     });
   }
 
