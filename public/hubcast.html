@@ -47,10 +47,37 @@
   </div>
 </div>
 
-<!-- Post feed -->
-<section class="section" style="padding-top:2.5rem;">
-  <div style="max-width:700px;margin:0 auto;" id="hubcast-feed">
-    <div class="loading">Loading posts…</div>
+<!-- Latest episode video -->
+<section class="section" style="padding-top:2.5rem;padding-bottom:1rem;">
+  <div style="max-width:700px;margin:0 auto;">
+    <p class="section-label" style="margin-bottom:0.75rem;">Latest Episode</p>
+    <div style="position:relative;padding-bottom:56.25%;border-radius:14px;overflow:hidden;background:#000;">
+      <iframe id="hubcast-video"
+              src="https://www.youtube.com/embed/507XahnLVW4?rel=0&modestbranding=1"
+              title="NJ AI Hubcast — Latest Episode"
+              frameborder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowfullscreen
+              style="position:absolute;inset:0;width:100%;height:100%;border:none;"></iframe>
+    </div>
+  </div>
+</section>
+
+<!-- Subscribe widget + post feed -->
+<section class="section" style="padding-top:1.5rem;">
+  <div style="max-width:700px;margin:0 auto;">
+    <!-- Substack subscribe embed -->
+    <div style="background:rgba(255,103,25,0.07);border:1px solid rgba(255,103,25,0.2);border-radius:14px;padding:1.75rem;margin-bottom:2.5rem;text-align:center;">
+      <p style="font-size:1rem;font-weight:700;color:#fff;margin:0 0 0.3rem;">Subscribe to NJ AI Hubcast</p>
+      <p style="font-size:0.88rem;color:var(--muted);margin:0 0 1rem;">Get episodes and posts delivered to your inbox.</p>
+      <iframe src="https://njaihubcast.substack.com/embed"
+              width="100%" height="150"
+              style="border:none;border-radius:8px;background:transparent;"
+              frameborder="0" scrolling="no"></iframe>
+    </div>
+
+    <!-- Past episodes from RSS -->
+    <div id="hubcast-feed"><div class="loading">Loading episodes…</div></div>
   </div>
 </section>
 
@@ -90,7 +117,7 @@
       const res   = await fetch('/api/hubcast');
       const items = await res.json();
       if (!items.length) {
-        feed.innerHTML = `<div class="empty-state">No posts yet. <a href="${SUBSTACK}" target="_blank" rel="noopener">Visit on Substack ↗</a></div>`;
+        feed.innerHTML = '';
         return;
       }
       feed.innerHTML = items.map((ep, i) => `
