@@ -28,29 +28,20 @@
   <button class="nav-toggle" aria-label="Toggle menu"><span></span><span></span><span></span></button>
 </nav>
 
-<!-- Publication header -->
-<div style="border-bottom:1px solid rgba(255,255,255,0.1);padding:2.5rem 2rem 2rem;max-width:100%;">
-  <div style="max-width:700px;margin:0 auto;text-align:center;">
-    <div style="display:inline-flex;align-items:center;justify-content:center;background:rgba(255,103,25,0.15);border:1px solid rgba(255,103,25,0.3);border-radius:14px;padding:0.55rem 1rem;gap:0.5rem;margin-bottom:1.2rem;">
-      <svg width="18" height="18" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0;border-radius:3px;"><rect width="16" height="16" rx="2.5" fill="#FF6719"/><rect x="2.5" y="4" width="11" height="1.8" rx="0.9" fill="white"/><rect x="2.5" y="7.1" width="11" height="1.8" rx="0.9" fill="white"/><rect x="2.5" y="10.2" width="6.5" height="1.8" rx="0.9" fill="white"/></svg>
-      <span style="color:#FF6719;font-size:0.78rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;">Substack</span>
-    </div>
-    <h1 style="font-size:2.4rem;font-weight:900;letter-spacing:-0.02em;margin:0 0 0.6rem;color:#fff;">NJ AI Hubcast</h1>
-    <p style="color:var(--muted);font-size:1.05rem;line-height:1.6;margin:0 0 1.4rem;">
-      Conversations, insights, and updates from the New Jersey AI ecosystem.
-    </p>
-    <a href="https://njaihubcast.substack.com/?r=3bgxr&utm_campaign=pub-share-checklist"
-       target="_blank" rel="noopener"
-       style="display:inline-flex;align-items:center;gap:0.5rem;background:#FF6719;color:#fff;font-weight:700;font-size:0.92rem;padding:0.65rem 1.4rem;border-radius:8px;text-decoration:none;letter-spacing:0.02em;transition:opacity 0.15s;">
-      Subscribe on Substack ↗
-    </a>
-  </div>
-</div>
-
 <!-- Latest episode video -->
-<section class="section" style="padding-top:2.5rem;padding-bottom:1rem;">
+<section class="section" style="padding-top:1.25rem;padding-bottom:1rem;">
   <div style="max-width:700px;margin:0 auto;">
-    <p class="section-label" style="margin-bottom:0.75rem;">Latest Episode</p>
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.75rem;margin-bottom:0.9rem;">
+      <div style="display:flex;align-items:center;gap:0.55rem;">
+        <svg width="18" height="18" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0;border-radius:3px;"><rect width="16" height="16" rx="2.5" fill="#FF6719"/><rect x="2.5" y="4" width="11" height="1.8" rx="0.9" fill="white"/><rect x="2.5" y="7.1" width="11" height="1.8" rx="0.9" fill="white"/><rect x="2.5" y="10.2" width="6.5" height="1.8" rx="0.9" fill="white"/></svg>
+        <h1 style="font-size:1.25rem;font-weight:800;margin:0;color:#fff;letter-spacing:-0.01em;">NJ AI Hubcast</h1>
+      </div>
+      <a href="https://njaihubcast.substack.com/?r=3bgxr&utm_campaign=pub-share-checklist"
+         target="_blank" rel="noopener"
+         style="display:inline-flex;align-items:center;gap:0.4rem;background:#FF6719;color:#fff;font-weight:700;font-size:0.82rem;padding:0.45rem 1rem;border-radius:7px;text-decoration:none;white-space:nowrap;">
+        Subscribe ↗
+      </a>
+    </div>
     <div style="position:relative;padding-bottom:56.25%;border-radius:14px;overflow:hidden;background:#000;">
       <iframe id="hubcast-video"
               src="https://www.youtube.com/embed/3KTRUX17rpc?rel=0&modestbranding=1"
