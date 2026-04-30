@@ -13,6 +13,7 @@ app.use('/api/partners', require('./routes/partners'));
 app.use('/api/contact', require('./routes/contact'));
 app.use('/api/legacy',  require('./routes/legacy'));
 app.use('/api/ai-news', require('./routes/ai-news'));
+app.use('/api/hubcast', require('./routes/hubcast'));
 
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
