@@ -53,7 +53,7 @@
     <p class="section-label" style="margin-bottom:0.75rem;">Latest Episode</p>
     <div style="position:relative;padding-bottom:56.25%;border-radius:14px;overflow:hidden;background:#000;">
       <iframe id="hubcast-video"
-              src="https://www.youtube.com/embed/507XahnLVW4?rel=0&modestbranding=1"
+              src="https://www.youtube.com/embed/3KTRUX17rpc?rel=0&modestbranding=1"
               title="NJ AI Hubcast — Latest Episode"
               frameborder="0"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
@@ -76,8 +76,36 @@
               frameborder="0" scrolling="no"></iframe>
     </div>
 
-    <!-- Past episodes from RSS -->
-    <div id="hubcast-feed"><div class="loading">Loading episodes…</div></div>
+    <!-- Featured / pinned post -->
+    <article id="hubcast-featured" style="border-bottom:1px solid rgba(255,255,255,0.09);padding-bottom:2.2rem;margin-bottom:0.5rem;">
+      <a href="https://njaihubcast.substack.com/p/why-nj-might-just-win-the-ai-race"
+         target="_blank" rel="noopener"
+         style="display:block;border-radius:12px;overflow:hidden;margin-bottom:1.2rem;">
+        <img src="https://substackcdn.com/image/youtube/w_728,c_limit/3KTRUX17rpc"
+             alt="Why NJ Might Just Win the AI Race"
+             loading="lazy"
+             style="width:100%;max-height:340px;object-fit:cover;display:block;" />
+      </a>
+      <div style="color:#FF6719;font-size:0.75rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:0.45rem;">April 30, 2026</div>
+      <h2 style="font-size:1.45rem;font-weight:800;line-height:1.25;margin:0 0 0.65rem;color:#fff;">
+        <a href="https://njaihubcast.substack.com/p/why-nj-might-just-win-the-ai-race"
+           target="_blank" rel="noopener"
+           style="color:inherit;text-decoration:none;">
+          Why NJ Might Just Win the AI Race
+        </a>
+      </h2>
+      <p style="color:var(--muted);font-size:0.97rem;line-height:1.65;margin:0 0 1rem;">
+        Research, commercial and academic perspectives on New Jersey's growing role at the center of American AI.
+      </p>
+      <a href="https://njaihubcast.substack.com/p/why-nj-might-just-win-the-ai-race"
+         target="_blank" rel="noopener"
+         style="color:#FF6719;font-size:0.88rem;font-weight:600;text-decoration:none;">
+        Read on Substack ↗
+      </a>
+    </article>
+
+    <!-- Additional episodes from RSS (de-duplicates the featured post) -->
+    <div id="hubcast-feed"></div>
   </div>
 </section>
 
@@ -115,7 +143,9 @@
     const SUBSTACK = 'https://njaihubcast.substack.com/?r=3bgxr&utm_campaign=pub-share-checklist';
     try {
       const res   = await fetch('/api/hubcast');
-      const items = await res.json();
+      const all   = await res.json();
+      // Remove any post already shown as the hardcoded featured item
+      const items = all.filter(ep => !ep.link.includes('why-nj-might-just-win'));
       if (!items.length) {
         feed.innerHTML = '';
         return;
