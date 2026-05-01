@@ -173,6 +173,15 @@ module.exports = {
       await setList('legacy', list);
       return list[idx];
     },
+    remove: async (id) => {
+      if (!hasKV) return mem.legacy.remove(id);
+      const list = await getList('legacy');
+      const idx = list.findIndex((l) => l.id === Number(id));
+      if (idx === -1) return null;
+      const [removed] = list.splice(idx, 1);
+      await setList('legacy', list);
+      return removed;
+    },
   },
 
   contacts: {

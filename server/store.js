@@ -274,6 +274,11 @@ module.exports = {
       legacy[idx] = { ...legacy[idx], ...data, id: legacy[idx].id };
       return legacy[idx];
     },
+    remove: (id) => {
+      const idx = legacy.findIndex((l) => l.id === Number(id));
+      if (idx === -1) return null;
+      return legacy.splice(idx, 1)[0];
+    },
   },
   contacts: {
     all: () => contacts,

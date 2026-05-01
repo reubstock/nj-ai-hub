@@ -32,4 +32,12 @@ router.put('/:id', async (req, res) => {
   } catch (e) { res.status(e.status || 500).json({ error: e.message }); }
 });
 
+router.delete('/:id', async (req, res) => {
+  try {
+    const deleted = await store.legacy.remove(req.params.id);
+    if (!deleted) return res.status(404).json({ error: 'Not found' });
+    res.json({ ok: true });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
 module.exports = router;
