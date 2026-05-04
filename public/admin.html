@@ -19,6 +19,18 @@
     .geocode-status { font-size: 0.78rem; color: var(--muted); margin-top: 0.3rem; min-height: 1.1em; }
     .photo-preview { margin-top: 0.5rem; border-radius: 8px; overflow: hidden; max-height: 160px; display: none; }
     .photo-preview img { width: 100%; height: 160px; object-fit: cover; display: block; }
+    /* Category select + show-on-map checkbox */
+    .field select { width: 100%; box-sizing: border-box; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.14); border-radius: 8px; color: #fff; font-size: 0.95rem; padding: 0.6rem 0.85rem; outline: none; font-family: inherit; }
+    .field select option { background: #0b1d3a; color: #fff; }
+    .checkbox-row { display: flex; align-items: center; gap: 0.6rem; cursor: pointer; user-select: none; }
+    .checkbox-row input[type="checkbox"] { width: 18px; height: 18px; accent-color: #f57c00; cursor: pointer; }
+    .checkbox-row .checkbox-label { font-size: 0.9rem; color: #fff; }
+    .checkbox-row .checkbox-hint  { font-size: 0.78rem; color: var(--muted); margin-left: 0.3rem; }
+    /* Category badge in card list */
+    .cat-pill { display: inline-block; font-size: 0.66rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.15rem 0.5rem; border-radius: 999px; margin-right: 0.4rem; vertical-align: middle; }
+    .map-flag { font-size: 0.72rem; font-weight: 600; padding: 0.15rem 0.5rem; border-radius: 999px; margin-left: 0.4rem; }
+    .map-flag.on  { background: rgba(74,222,128,0.16); color: #4ade80; }
+    .map-flag.off { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.45); }
     .submit-btn { background: #f57c00; color: #fff; font-weight: 700; font-size: 0.95rem; padding: 0.7rem 1.8rem; border: none; border-radius: 8px; cursor: pointer; transition: opacity 0.15s; }
     .submit-btn:hover { opacity: 0.88; }
     .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
@@ -68,6 +80,21 @@
   <!-- ── Create form ── -->
   <div class="admin-form">
     <h2 style="font-size:1.1rem;font-weight:700;margin:0 0 1.5rem;color:#fff;">New Notecard</h2>
+
+    <div class="field-row">
+      <div class="field">
+        <label>Category *</label>
+        <select id="f-category">
+          <!-- populated from /api/legacy/categories -->
+        </select>
+      </div>
+      <div class="field" style="display:flex;align-items:flex-end;">
+        <label class="checkbox-row" style="margin-bottom:0.6rem;">
+          <input type="checkbox" id="f-showmap" checked />
+          <span class="checkbox-label">Show on homepage map</span>
+        </label>
+      </div>
+    </div>
 
     <div class="field">
       <label>Name *</label>
@@ -142,6 +169,28 @@
 <script>
   document.getElementById('year').textContent = new Date().getFullYear();
 
+  // ── Categories (loaded from /api/legacy/categories) ──
+  let CATEGORIES = {};
+  async function loadCategories() {
+    try {
+      const res = await fetch('/api/legacy/categories');
+      CATEGORIES = await res.json();
+    } catch (e) {
+      // fallback if request fails
+      CATEGORIES = {
+        LEGACY:   { label: 'LEGACY',   color: '#ef4444' },
+        RD:       { label: 'R&D',      color: '#4a90d9' },
+        STARTUPS: { label: 'STARTUPS', color: '#f57c00' },
+        TRAINING: { label: 'TRAINING', color: '#16a34a' },
+        POLICY:   { label: 'POLICY',   color: '#a855f7' },
+        GRAVITY:  { label: 'GRAVITY',  color: '#f5c518' },
+      };
+    }
+    const sel = document.getElementById('f-category');
+    sel.innerHTML = Object.entries(CATEGORIES)
+      .map(([key, v]) => `<option value="${key}">${v.label}</option>`).join('');
+  }
+
   // ── Geocode address → lat/lng via OpenStreetMap Nominatim ──
   async function geocode() {
     const addr = document.getElementById('f-location').value.trim();
@@ -193,6 +242,8 @@
 
     const payload = {
       title,
+      category:    document.getElementById('f-category').value || 'LEGACY',
+      showOnMap:   document.getElementById('f-showmap').checked,
       description: document.getElementById('f-desc').value.trim() || undefined,
       link:        document.getElementById('f-link').value.trim()  || undefined,
       location:    document.getElementById('f-location').value.trim() || undefined,
@@ -209,6 +260,8 @@
       msg.textContent = '✓ Notecard created!'; msg.className = 'msg ok';
       // Clear form
       ['f-title','f-desc','f-link','f-location','f-lat','f-lng','f-photo'].forEach(id => document.getElementById(id).value = '');
+      document.getElementById('f-showmap').checked = true;
+      document.getElementById('f-category').selectedIndex = 0;
       document.getElementById('photo-preview').style.display = 'none';
       document.getElementById('geo-status').textContent = '';
       loadCards();
@@ -226,19 +279,28 @@
       const res   = await fetch('/api/legacy');
       const items = await res.json();
       if (!items.length) { list.innerHTML = '<div class="empty-state">No notecards yet.</div>'; return; }
-      list.innerHTML = items.map(c => `
+      list.innerHTML = items.map(c => {
+        const cat   = CATEGORIES[c.category] || CATEGORIES.LEGACY;
+        const onMap = c.showOnMap !== false; // undefined/missing -> treat as on
+        const pillBg = `${cat.color}22`;
+        return `
         <div class="card-row" id="crow-${c.id}">
           ${c.photo
             ? `<img src="${c.photo}" alt="${c.title}" onerror="this.style.display='none'" />`
             : `<div style="width:52px;height:52px;border-radius:6px;background:rgba(255,255,255,0.08);flex-shrink:0;"></div>`}
           <div class="card-row-info">
-            <div class="card-row-name">${c.title}</div>
+            <div class="card-row-name">
+              <span class="cat-pill" style="background:${pillBg};color:${cat.color};">${cat.label}</span>
+              ${c.title}
+              <span class="map-flag ${onMap ? 'on' : 'off'}" title="Show on homepage map">${onMap ? '● On map' : '○ Off map'}</span>
+            </div>
             <div class="card-row-meta">${[c.location, c.lat && c.lng ? `${Number(c.lat).toFixed(3)}, ${Number(c.lng).toFixed(3)}` : ''].filter(Boolean).join(' · ')}</div>
           </div>
           ${c.link ? `<a href="${c.link}" target="_blank" rel="noopener" style="color:#4a90d9;font-size:0.78rem;font-weight:600;text-decoration:none;flex-shrink:0;">View ↗</a>` : ''}
+          <button class="del-btn" style="background:rgba(74,144,217,0.12);border-color:rgba(74,144,217,0.25);color:#4a90d9;" onclick="toggleMap(${c.id}, ${onMap ? 'false' : 'true'})">${onMap ? 'Hide on map' : 'Show on map'}</button>
           <button class="del-btn" onclick="deleteCard(${c.id})">Delete</button>
-        </div>
-      `).join('');
+        </div>`;
+      }).join('');
     } catch (e) {
       list.innerHTML = '<div class="empty-state">Could not load notecards.</div>';
     }
@@ -257,7 +319,23 @@
     } catch (e) { alert('Could not delete: ' + e.message); }
   }
 
-  loadCards();
+  // ── Toggle showOnMap ──
+  async function toggleMap(id, next) {
+    try {
+      // PUT requires title to pass server validation — fetch full record first.
+      const cur = await (await fetch(`/api/legacy/${id}`)).json();
+      const res = await fetch(`/api/legacy/${id}`, {
+        method:  'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ ...cur, showOnMap: next }),
+      });
+      if (!res.ok) throw new Error('Update failed');
+      loadCards();
+    } catch (e) { alert('Could not update: ' + e.message); }
+  }
+
+  // ── Init ──
+  loadCategories().then(loadCards);
 </script>
 </body>
 </html>

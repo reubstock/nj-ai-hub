@@ -185,9 +185,46 @@ const partners = [
   { id: nextId('partners'), name: 'NJIT',                 role: 'Higher-ed partner — Newark',           logo: '/images/partner-njit.png',      url: 'https://www.njit.edu',       lat: 40.7421, lng: -74.1782 },
 ];
 
+// ── Notecard categories (the 6 map event types shown on the homepage) ──
+// Each card has a category that drives its color and label on the map.
+const CATEGORIES = {
+  LEGACY:   { label: 'LEGACY',   color: '#ef4444' },
+  RD:       { label: 'R&D',      color: '#4a90d9' },
+  STARTUPS: { label: 'STARTUPS', color: '#f57c00' },
+  TRAINING: { label: 'TRAINING', color: '#16a34a' },
+  POLICY:   { label: 'POLICY',   color: '#a855f7' },
+  GRAVITY:  { label: 'GRAVITY',  color: '#f5c518' },
+};
+
 const legacy = [
   {
     id: nextId('legacy'),
+    category: 'GRAVITY',
+    showOnMap: true,
+    title: 'NJ AI Hub',
+    description: 'A first-of-its-kind public-private partnership between Princeton, NJEDA, Microsoft, and CoreWeave — accelerating AI research, commercialization, workforce training, and responsible-AI policy in New Jersey.',
+    link: '/location.html',
+    location: 'Alexander Road, West Windsor, NJ',
+    date: '2025-03-28',
+    photo: 'https://images.unsplash.com/photo-1581090700227-1e37b190418e?w=900&q=80&auto=format&fit=crop',
+    lat: 40.3260, lng: -74.6273,
+  },
+  {
+    id: nextId('legacy'),
+    category: 'TRAINING',
+    showOnMap: true,
+    title: 'Microsoft TechSpark',
+    description: 'Microsoft\'s flagship empowerment program brings tech-skills training and job pathways to NJ residents through community colleges and partner organizations across the state.',
+    link: 'https://www.microsoft.com/en-us/corporate-responsibility/techspark',
+    location: 'NJ AI Hub, West Windsor',
+    date: '2025-04-01',
+    photo: 'https://images.unsplash.com/photo-1531482615713-2afd69097998?w=900&q=80&auto=format&fit=crop',
+    lat: 40.3260, lng: -74.6273,
+  },
+  {
+    id: nextId('legacy'),
+    category: 'LEGACY',
+    showOnMap: true,
     title: 'Sarnoff Laboratories',
     description: 'RCA\'s David Sarnoff Research Center in Princeton pioneered transistor technology, color television broadcasting, and early computing — foundational breakthroughs that shaped the modern electronics industry.',
     link: 'https://en.wikipedia.org/wiki/SRI_International_(Sarnoff)',
@@ -198,6 +235,8 @@ const legacy = [
   },
   {
     id: nextId('legacy'),
+    category: 'LEGACY',
+    showOnMap: true,
     title: 'Bell Labs',
     description: 'Bell Laboratories in Murray Hill and Holmdel invented the transistor, laser, Unix, C, and cellular networks — earning more Nobel Prizes than most nations and defining the template for industrial research.',
     link: 'https://en.wikipedia.org/wiki/Bell_Labs',
@@ -208,6 +247,8 @@ const legacy = [
   },
   {
     id: nextId('legacy'),
+    category: 'LEGACY',
+    showOnMap: false,
     title: 'John von Neumann — IAS Princeton',
     description: `Working at the Institute for Advanced Study in Princeton, von Neumann pioneered the stored-program computer architecture that underlies every machine built since. His contributions to logic, game theory, and self-replicating automata laid theoretical foundations that AI researchers still build on today.`,
     link: 'https://en.wikipedia.org/wiki/John_von_Neumann',
@@ -218,6 +259,8 @@ const legacy = [
   },
   {
     id: nextId('legacy'),
+    category: 'LEGACY',
+    showOnMap: false,
     title: 'RCA Laboratories',
     description: 'RCA\'s Princeton research arm developed the color TV picture tube, liquid crystal displays, and early satellite communication systems, driving consumer electronics forward for decades.',
     link: 'https://en.wikipedia.org/wiki/RCA_Laboratories',
@@ -234,6 +277,7 @@ const sortByDateDesc = (arr) => [...arr].sort((a, b) => (b.date || '').localeCom
 const sortByDateAsc  = (arr) => [...arr].sort((a, b) => (a.date || '').localeCompare(b.date || ''));
 
 module.exports = {
+  CATEGORIES,
   news: {
     all: () => sortByDateDesc(news),
     get: (id) => news.find((n) => n.id === Number(id)) || null,
@@ -264,7 +308,15 @@ module.exports = {
     all: () => sortByDateAsc(legacy),
     get: (id) => legacy.find((l) => l.id === Number(id)) || null,
     insert: (data) => {
-      const item = { id: nextId('legacy'), date: today(), ...data };
+      const item = {
+        id: nextId('legacy'),
+        date: today(),
+        category: 'LEGACY',
+        showOnMap: true,
+        ...data,
+      };
+      // Normalise category to a known key
+      if (!CATEGORIES[item.category]) item.category = 'LEGACY';
       legacy.push(item);
       return item;
     },

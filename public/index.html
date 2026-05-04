@@ -487,39 +487,54 @@
     try {
       const legacyAll = await legacyPromise;
 
-      // First, second, and last entries (sorted by date asc from API)
-      const legacyPinned = legacyAll.length >= 3
-        ? [legacyAll[0], legacyAll[1], legacyAll[legacyAll.length - 1]]
-        : legacyAll;
+      // Show map markers only for items flagged showOnMap with coords.
+      // Cap at 6 so the map doesn't get too cluttered.
+      const legacyPinned = legacyAll
+        .filter(l => l.showOnMap !== false && l.lat && l.lng)
+        .slice(0, 6);
 
-      legacyPinned.filter(l => l.lat && l.lng).forEach(l => {
+      // Map category key -> marker CSS class
+      const MARKER_CLASS_BY_CATEGORY = {
+        LEGACY:   'legacy-marker',
+        RD:       'cat-rd-marker',
+        STARTUPS: 'cat-startups-marker',
+        TRAINING: 'cat-training-marker',
+        POLICY:   'cat-policy-marker',
+        GRAVITY:  'cat-gravity-marker',
+      };
+
+      legacyPinned.forEach(l => {
         const key = `legacy-${l.id}`;
+        const cat = NOTECARD_CATEGORIES[l.category] || NOTECARD_CATEGORIES.LEGACY;
+        const markerClass = MARKER_CLASS_BY_CATEGORY[l.category] || 'legacy-marker';
+        const detailHref  = l.link || `/legacy-detail.html?id=${l.id}`;
         const photoHtml = l.photo
           ? `<div style="margin:-10px -14px 8px;border-radius:6px 6px 0 0;overflow:hidden;height:90px;">
                <img src="${l.photo}" alt="${l.title}"
                     style="width:100%;height:100%;object-fit:cover;display:block;" />
              </div>`
           : '';
-        const m = L.marker([l.lat, l.lng], { icon: makeIcon('legacy-marker') }).addTo(heroMap);
+        const m = L.marker([l.lat, l.lng], { icon: makeIcon(markerClass) }).addTo(heroMap);
         m.bindPopup(`
           <div class="popup-clickable" onclick="window._mapMarkerClick('${key}')" style="min-width:200px;max-width:240px;">
             ${photoHtml}
-            <div style="font-family:Arial,sans-serif;font-size:0.65rem;letter-spacing:0.12em;text-transform:uppercase;color:#ef4444;margin-bottom:0.3rem;font-weight:700;">Legacy</div>
+            <div style="font-family:Arial,sans-serif;font-size:0.65rem;letter-spacing:0.12em;text-transform:uppercase;color:${cat.color};margin-bottom:0.3rem;font-weight:700;">${cat.label}</div>
             <h4 style="margin:0 0 0.25rem;">${l.title}</h4>
             <p style="margin:0 0 0.5rem;">📍 ${l.location || ''}</p>
-            <a href="/legacy.html#l${l.id}" onclick="event.stopPropagation()"
-               style="display:inline-block;font-size:0.72rem;color:#ef4444;text-decoration:none;">View entry →</a>
+            <a href="${detailHref}" onclick="event.stopPropagation()"
+               style="display:inline-block;font-size:0.72rem;color:${cat.color};text-decoration:none;">View entry →</a>
           </div>
         `, { className: 'dark-popup', maxWidth: 260, autoClose: false, closeOnClick: false });
         m.on('click', () => window._mapMarkerClick(key));
         window._markerRefs[key] = m;
       });
 
-      // Show launch notecards: Hub, Bell Labs (oldest legacy with coords), TechSpark
-      showLaunchCards(legacyAll.slice(0, 1).filter(l => l.lat && l.lng));
+      // Show launch notecards — driven entirely by /api/legacy now.
+      // showLaunchCards filters internally by showOnMap === true.
+      showLaunchCards(legacyAll);
     } catch (e) {
       console.error('Legacy load failed:', e);
-      showLaunchCards([]);  // Hub + TechSpark always show even if legacy API fails
+      showLaunchCards([]);
     }
   }
 
@@ -769,26 +784,37 @@
     });
   }
 
+  // Category styling — keep in sync with /api/legacy/categories on the server
+  const NOTECARD_CATEGORIES = {
+    LEGACY:   { label: 'LEGACY',   color: '#ef4444' },
+    RD:       { label: 'R&D',      color: '#4a90d9' },
+    STARTUPS: { label: 'STARTUPS', color: '#f57c00' },
+    TRAINING: { label: 'TRAINING', color: '#16a34a' },
+    POLICY:   { label: 'POLICY',   color: '#a855f7' },
+    GRAVITY:  { label: 'GRAVITY',  color: '#f5c518' },
+  };
+
   function showLaunchCards(legacyItems) {
     const container = document.getElementById('launch-cards');
     if (!container) return;
 
-    const cards = [
-      { id: 'lcard-hub', label: 'THE HUB', color: '#f57c00',
-        title: 'NJ AI Hub', meta: 'Alexander Road, West Windsor',
-        href: '/location.html', photo: null,
-        lat: HUB_LATLNG[0], lng: HUB_LATLNG[1] },
-      ...legacyItems.map(l => ({
-        id: `lcard-l${l.id}`, label: 'LEGACY', color: '#ef4444',
-        title: l.title, meta: l.location || '',
-        href: `/legacy-detail.html?id=${l.id}`, photo: l.photo || null,
-        lat: l.lat, lng: l.lng,
-      })),
-      { id: 'lcard-techspark', label: 'TRAINING', color: '#16a34a',
-        title: 'Microsoft TechSpark', meta: 'NJ AI Hub, West Windsor',
-        href: '/team.html', photo: null,
-        lat: HUB_LATLNG[0], lng: HUB_LATLNG[1] },
-    ];
+    // Only items flagged showOnMap (default true) and with coords land here.
+    const cards = legacyItems
+      .filter(l => l.showOnMap !== false && l.lat && l.lng)
+      .map(l => {
+        const cat = NOTECARD_CATEGORIES[l.category] || NOTECARD_CATEGORIES.LEGACY;
+        return {
+          id: `lcard-l${l.id}`,
+          label: cat.label,
+          color: cat.color,
+          title: l.title,
+          meta:  l.location || '',
+          href:  l.link || `/legacy-detail.html?id=${l.id}`,
+          photo: l.photo || null,
+          lat:   l.lat,
+          lng:   l.lng,
+        };
+      });
 
     container.innerHTML = cards.map(c => `
       <div class="launch-card" id="${c.id}" data-lat="${c.lat}" data-lng="${c.lng}" role="button" tabindex="0">

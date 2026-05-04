@@ -1,5 +1,11 @@
-const router = require('express').Router();
-const store  = require('../kv-store');
+const router  = require('express').Router();
+const store   = require('../kv-store');
+const memStore = require('../store');
+
+// Expose category constants so the admin UI can build its dropdown.
+// (kv-store re-exports these from store.js when running in mem-only mode;
+//  always import directly to avoid an extra await.)
+router.get('/categories', (req, res) => res.json(memStore.CATEGORIES));
 
 router.get('/', async (req, res) => {
   try { res.json(await store.legacy.all()); }
